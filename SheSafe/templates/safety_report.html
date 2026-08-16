@@ -1,0 +1,461 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Safety Report | SheSafe</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet"
+          href="/static.css">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <a href="/" class="brand">
+
+        <div class="brand-icon">
+            <i class="fa-solid fa-shield-heart"></i>
+        </div>
+
+        <div>
+            <h2>She<span>Safe</span></h2>
+            <small>Safety & Empowerment</small>
+        </div>
+
+    </a>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/#safety">Safety</a>
+        <a href="{% url 'resources' %}">Resources</a>
+        <a href="/#empowerment">Empowerment</a>
+    </nav>
+
+    <a href="/logout/" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+    </a>
+
+</header>
+
+
+<main>
+
+    <section class="report-hero">
+
+        <div class="hero-content">
+
+            <div class="badge">
+                <i class="fa-solid fa-shield-halved"></i>
+                SAFETY SUPPORT
+            </div>
+
+            <h1>
+                Report a
+                <span>Safety Concern.</span>
+            </h1>
+
+            <p>
+                Share important information about a safety concern.
+                Your report helps create awareness and supports
+                safer communities.
+            </p>
+
+        </div>
+
+        <div class="hero-icon">
+
+            <div class="icon-circle">
+                <i class="fa-solid fa-file-shield"></i>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section class="report-section">
+
+        <div class="report-card">
+
+            <div class="card-heading">
+
+                <div class="heading-icon">
+                    <i class="fa-solid fa-file-circle-plus"></i>
+                </div>
+
+                <div>
+                    <h2>Submit Safety Report</h2>
+
+                    <p>
+                        Please provide accurate information.
+                    </p>
+                </div>
+
+            </div>
+
+
+            <form method="POST"
+                  enctype="multipart/form-data"
+                  id="reportForm">
+
+                {% csrf_token %}
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="report_type">
+                            Report Type
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-list"></i>
+
+                            <select
+                                id="report_type"
+                                name="report_type"
+                                required>
+
+                                <option value="">
+                                    Select report type
+                                </option>
+
+                                <option value="harassment">
+                                    Harassment
+                                </option>
+
+                                <option value="unsafe_location">
+                                    Unsafe Location
+                                </option>
+
+                                <option value="cyber_safety">
+                                    Cyber Safety
+                                </option>
+
+                                <option value="transport">
+                                    Transportation Safety
+                                </option>
+
+                                <option value="domestic">
+                                    Domestic Safety
+                                </option>
+
+                                <option value="other">
+                                    Other
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="location">
+                            Location
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+                            <input
+                                type="text"
+                                id="location"
+                                name="location"
+                                placeholder="Enter incident location"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="incident_date">
+                            Incident Date
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-calendar"></i>
+
+                            <input
+                                type="date"
+                                id="incident_date"
+                                name="incident_date"
+                                required>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="incident_time">
+                            Incident Time
+                        </label>
+
+                        <div class="input-wrapper">
+
+                            <i class="fa-solid fa-clock"></i>
+
+                            <input
+                                type="time"
+                                id="incident_time"
+                                name="incident_time"
+                                required>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="description">
+                        What happened?
+                    </label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                        rows="6"
+                        placeholder="Describe the safety concern..."
+                        required></textarea>
+
+                    <small class="character-count">
+                        <span id="charCount">0</span>/1000 characters
+                    </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Supporting Evidence
+                        <span>(Optional)</span>
+                    </label>
+
+                    <label class="upload-box"
+                           for="evidence">
+
+                        <i class="fa-solid fa-cloud-arrow-up"></i>
+
+                        <strong>
+                            Upload a file
+                        </strong>
+
+                        <small>
+                            Images or documents can be attached
+                        </small>
+
+                        <input
+                            type="file"
+                            id="evidence"
+                            name="evidence"
+                            hidden>
+
+                    </label>
+
+                    <div id="fileName"></div>
+
+                </div>
+
+
+                <div class="privacy-box">
+
+                    <i class="fa-solid fa-lock"></i>
+
+                    <div>
+
+                        <strong>Your information matters</strong>
+
+                        <p>
+                            Please avoid sharing unnecessary private
+                            information. Only provide details relevant
+                            to the safety concern.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="submit-btn">
+
+                    <i class="fa-solid fa-paper-plane"></i>
+
+                    Submit Safety Report
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <aside class="side-panel">
+
+            <div class="side-card">
+
+                <div class="side-icon">
+                    <i class="fa-solid fa-circle-info"></i>
+                </div>
+
+                <h3>Before submitting</h3>
+
+                <ul>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Provide accurate information.
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Include the relevant location.
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Explain the concern clearly.
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Avoid unnecessary personal details.
+                    </li>
+
+                </ul>
+
+            </div>
+
+
+            <div class="emergency-card">
+
+                <div class="emergency-icon">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+
+                <h3>Immediate Danger?</h3>
+
+                <p>
+                    If you are in immediate danger, contact
+                    emergency services or a trusted person.
+                </p>
+
+                <a href="tel:112">
+                    <i class="fa-solid fa-phone"></i>
+                    Emergency: 112
+                </a>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    <div class="footer-content">
+
+        <div class="footer-brand">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    <i class="fa-solid fa-shield-heart"></i>
+                </div>
+
+                <div>
+                    <h2>She<span>Safe</span></h2>
+                    <small>Safety & Empowerment</small>
+                </div>
+
+            </div>
+
+            <p>
+                Creating awareness, promoting safety and
+                empowering women through technology.
+            </p>
+
+        </div>
+
+
+        <div>
+
+            <h4>Quick Links</h4>
+
+            <a href="/">Home</a>
+            <a href="/#safety">Safety</a>
+            <a href="{% url 'resources' %}">Resources</a>
+            <a href="/#empowerment">Empowerment</a>
+
+        </div>
+
+
+        <div>
+
+            <h4>Support</h4>
+
+            <a href="/safety-report/">Safety Report</a>
+            <a href="/#contact">Emergency Help</a>
+            <a href="/#contact">Contact</a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 SheSafe. Women's Safety & Empowerment Program.
+        </p>
+
+        <p>
+            Designed for awareness & empowerment.
+        </p>
+
+    </div>
+
+</footer>
+
+
+<script src="/static/safety_report.js"></script>
+
+</body>
+</html>

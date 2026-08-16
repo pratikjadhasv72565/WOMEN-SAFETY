@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SheSafe | Women's Safety & Empowerment Platform</title>
+    <meta name="description" content="SheSafe is an advanced digital safety and empowerment platform for women — featuring real-time emergency SOS, trusted contacts network, journey check-ins, safety reporting, and curated educational resources.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,600;0,700;0,800;1,600;1,700&display=swap" rel="stylesheet">
+
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <!-- ================= NAVBAR ================= -->
+    <header class="navbar" id="navbar">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fa-solid fa-shield-heart"></i>
+            </div>
+            <div>
+                <h2>She<span>Safe</span></h2>
+                <small>Safety &amp; Empowerment</small>
+            </div>
+        </div>
+
+        <nav id="navMenu">
+            <a href="#home" class="active">Home</a>
+            <a href="#features">Features</a>
+            <a href="#safety">Safety</a>
+            <a href="{% url 'resources' %}">Resources</a>
+            <a href="#empowerment">Empowerment</a>
+            <a href="#contact">Emergency Help</a>
+        </nav>
+
+        <div class="nav-actions">
+            <button id="themeBtn" class="icon-btn" title="Toggle dark mode" aria-label="Toggle dark mode">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+
+            {% if user.is_authenticated %}
+            <div class="user-pill">
+                <i class="fa-solid fa-circle-user"></i>
+                <span>{{ user.username }}</span>
+            </div>
+            <a href="{% url 'logout' %}" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Logout
+            </a>
+            {% else %}
+            <a href="{% url 'login' %}" class="nav-btn nav-btn-outline">
+                <i class="fa-solid fa-right-to-bracket"></i>
+                Sign In
+            </a>
+            <a href="{% url 'register' %}" class="nav-btn nav-btn-primary">
+                Get Started
+            </a>
+            {% endif %}
+
+            <button class="sos-pill" onclick="openSOS()" aria-label="Emergency SOS">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span>SOS</span>
+            </button>
+
+            <button class="menu-btn" onclick="toggleMenu()" aria-label="Open mobile menu">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <!-- ================= HERO SECTION ================= -->
+        <section class="hero" id="home">
+            <div class="hero-bg-orbs">
+                <div class="orb orb-1"></div>
+                <div class="orb orb-2"></div>
+                <div class="orb orb-3"></div>
+            </div>
+
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span>Safe &bull; Strong &bull; Empowered</span>
+                </div>
+
+                <h1>
+                    Your Safety.<br>
+                    <span class="gradient-text">Your Strength.</span><br>
+                    Your Peace of Mind.
+                </h1>
+
+                <p class="hero-desc">
+                    SheSafe is a next-generation safety shield and community ecosystem designed specifically for women. Trigger instant GPS-enabled SOS alerts, track active travel journeys, connect with trusted lifelines, and access empowerment tools 24/7.
+                </p>
+
+                <div class="hero-cta">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'checkin' %}" class="primary-btn pulse-effect">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>Start Safety Check-In</span>
+                    </a>
+                    <a href="{% url 'trusted_contacts' %}" class="secondary-btn">
+                        <i class="fa-solid fa-user-shield"></i>
+                        <span>Manage Circle</span>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'register' %}" class="primary-btn pulse-effect">
+                        <i class="fa-solid fa-shield-heart"></i>
+                        <span>Join SheSafe &bull; Free</span>
+                    </a>
+                    <a href="{% url 'login' %}" class="secondary-btn">
+                        <span>Sign In</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+
+                <div class="trust-row">
+                    <div class="trust-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>24/7 Emergency Support</span>
+                    </div>
+                    <div class="trust-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Instant GPS Broadcast</span>
+                    </div>
+                    <div class="trust-item">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>100% Free &amp; Encrypted</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="visual-glow-ring"></div>
+                <div class="visual-glow-core"></div>
+
+                <div class="hero-main-card glass-morphism">
+                    <div class="card-status-bar">
+                        <span class="status-title">
+                            <i class="fa-solid fa-shield-halved"></i> SheSafe Shield
+                        </span>
+                        <span class="status-live">
+                            <span class="pulse-dot"></span> Active
+                        </span>
+                    </div>
+
+                    <div class="shield-pulse-wrapper">
+                        <div class="shield-ripple ripple-1"></div>
+                        <div class="shield-ripple ripple-2"></div>
+                        <div class="shield-ripple ripple-3"></div>
+                        <div class="shield-core-icon">
+                            <i class="fa-solid fa-shield-heart"></i>
+                        </div>
+                    </div>
+
+                    <h3>You are protected 24/7</h3>
+                    <p>Instant alerts connected to your guardians and emergency helplines.</p>
+
+                    <button onclick="openSOS()" class="hero-sos-action" aria-label="Trigger SOS">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        <span>One-Tap SOS Alert</span>
+                    </button>
+                </div>
+
+                <!-- Floating Cards -->
+                <div class="float-card card-loc">
+                    <div class="fc-icon purple">
+                        <i class="fa-solid fa-location-crosshairs"></i>
+                    </div>
+                    <div class="fc-text">
+                        <strong>Live Check-In</strong>
+                        <small>Auto alerts on timer expiry</small>
+                    </div>
+                </div>
+
+                <div class="float-card card-network">
+                    <div class="fc-icon green">
+                        <i class="fa-solid fa-user-group"></i>
+                    </div>
+                    <div class="fc-text">
+                        <strong>Trusted Network</strong>
+                        <small>Guardians notified instantly</small>
+                    </div>
+                </div>
+
+                <div class="float-card card-alert">
+                    <div class="fc-icon red">
+                        <i class="fa-solid fa-bell"></i>
+                    </div>
+                    <div class="fc-text">
+                        <strong>Instant Helplines</strong>
+                        <small>112 &bull; 181 &bull; 100 direct dial</small>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= STATS BAR ================= -->
+        <section class="stats-ribbon">
+            <div class="stat-box">
+                <span class="stat-number">100+</span>
+                <span class="stat-label">Safety &amp; Legal Guides</span>
+            </div>
+            <div class="stat-sep"></div>
+            <div class="stat-box">
+                <span class="stat-number">24/7</span>
+                <span class="stat-label">Rapid SOS Dispatch</span>
+            </div>
+            <div class="stat-sep"></div>
+            <div class="stat-box">
+                <span class="stat-number">100%</span>
+                <span class="stat-label">Privacy First &amp; Free</span>
+            </div>
+            <div class="stat-sep"></div>
+            <div class="stat-box">
+                <span class="stat-number">0-Click</span>
+                <span class="stat-label">Direct Emergency Dialer</span>
+            </div>
+        </section>
+
+        <!-- ================= PLATFORM CORE MODULES ================= -->
+        <section class="features-section" id="features">
+            <div class="section-heading text-center">
+                <span class="badge-tag">COMPLETE SAFETY ECOSYSTEM</span>
+                <h2>Everything you need to feel confident &amp; safe</h2>
+                <p>Designed thoughtfully to provide instant response in crises and proactive prevention in daily life.</p>
+            </div>
+
+            <div class="features-grid">
+                <!-- Card 1: SOS -->
+                <div class="feature-card feature-sos">
+                    <div class="fc-top">
+                        <div class="f-icon red-icon">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                        <span class="f-tag red-tag">CRITICAL</span>
+                    </div>
+                    <h3>One-Tap SOS Emergency</h3>
+                    <p>Triggers immediate multi-channel alerts with precise live coordinates sent directly to your designated primary contact and trusted circle.</p>
+                    <div class="fc-actions">
+                        <button onclick="openSOS()" class="f-btn f-btn-sos">
+                            <span>Open SOS Center</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Card 2: Check-In -->
+                <div class="feature-card">
+                    <div class="fc-top">
+                        <div class="f-icon purple-icon">
+                            <i class="fa-solid fa-stopwatch-20"></i>
+                        </div>
+                        <span class="f-tag purple-tag">PROACTIVE</span>
+                    </div>
+                    <h3>Smart Travel Check-In</h3>
+                    <p>Commuting alone or traveling late? Start an interactive timer. If you don't mark yourself safe within the set window, your guardians are automatically alerted.</p>
+                    <div class="fc-actions">
+                        <a href="{% url 'checkin' %}" class="f-btn">
+                            <span>Start Journey Check-In</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 3: Trusted Contacts -->
+                <div class="feature-card">
+                    <div class="fc-top">
+                        <div class="f-icon teal-icon">
+                            <i class="fa-solid fa-people-roof"></i>
+                        </div>
+                        <span class="f-tag teal-tag">GUARDIANS</span>
+                    </div>
+                    <h3>Trusted Contacts Network</h3>
+                    <p>Add and organize family, close friends, or colleagues with custom relationship roles, primary SOS responder flags, and quick phone and SMS channels.</p>
+                    <div class="fc-actions">
+                        <a href="{% url 'trusted_contacts' %}" class="f-btn">
+                            <span>Manage My Network</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 4: Safety Reports -->
+                <div class="feature-card">
+                    <div class="fc-top">
+                        <div class="f-icon amber-icon">
+                            <i class="fa-solid fa-clipboard-list"></i>
+                        </div>
+                        <span class="f-tag amber-tag">REPORTING</span>
+                    </div>
+                    <h3>Incident &amp; Hazard Logging</h3>
+                    <p>Privately document and track incidents, unsafe zones, or suspicious activities with media uploads, severity indicators, and precise timestamps.</p>
+                    <div class="fc-actions">
+                        <a href="{% url 'safety_report' %}" class="f-btn">
+                            <span>Submit Safety Report</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 5: Knowledge Library -->
+                <div class="feature-card">
+                    <div class="fc-top">
+                        <div class="f-icon indigo-icon">
+                            <i class="fa-solid fa-book-bookmark"></i>
+                        </div>
+                        <span class="f-tag indigo-tag">AWARENESS</span>
+                    </div>
+                    <h3>Curated Safety Library</h3>
+                    <p>Practical guides spanning situational awareness, cyber &amp; social media privacy, home security, solo traveling, and basic self-defense fundamentals.</p>
+                    <div class="fc-actions">
+                        <a href="{% url 'resources' %}" class="f-btn">
+                            <span>Explore Library</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Card 6: Emergency Helplines -->
+                <div class="feature-card">
+                    <div class="fc-top">
+                        <div class="f-icon blue-icon">
+                            <i class="fa-solid fa-phone-volume"></i>
+                        </div>
+                        <span class="f-tag blue-tag">DIRECT HELPLINES</span>
+                    </div>
+                    <h3>Instant Helplines &amp; Dialers</h3>
+                    <p>Direct integration with National Emergency Services (112), Women's Helpline (181), and Police (100) with automatic GPS location detection for operators.</p>
+                    <div class="fc-actions">
+                        <a href="#contact" class="f-btn">
+                            <span>View Helplines</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= SAFETY AWARENESS & CHECKLIST ================= -->
+        <section class="safety-awareness-section" id="safety">
+            <div class="safety-container">
+                <div class="safety-visual-box">
+                    <div class="safety-gradient-backdrop"></div>
+                    <div class="shield-art-wrap">
+                        <div class="shield-art-icon">
+                            <i class="fa-solid fa-user-shield"></i>
+                        </div>
+                        <div class="art-card art-card-1">
+                            <i class="fa-solid fa-satellite-dish"></i>
+                            <div>
+                                <strong>GPS Live Pinpoint</strong>
+                                <small>Accurate within 5 meters</small>
+                            </div>
+                        </div>
+                        <div class="art-card art-card-2">
+                            <i class="fa-solid fa-lock"></i>
+                            <div>
+                                <strong>Zero Data Selling</strong>
+                                <small>Encrypted user credentials</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="safety-text-box">
+                    <span class="badge-tag">EMPOWERED LIVING</span>
+                    <h2>Safety is built on daily habits &amp; preparedness</h2>
+                    <p>Understanding your environment and having ready-to-use digital tools turns anxiety into confident action.</p>
+
+                    <div class="checklist-grid">
+                        <div class="check-item">
+                            <div class="check-badge">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4>Proactive Situational Awareness</h4>
+                                <p>Stay mindful in transit, keep eyes off the phone in secluded areas, and scan exits.</p>
+                            </div>
+                        </div>
+
+                        <div class="check-item">
+                            <div class="check-badge">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4>Pre-Planned Trusted Circles</h4>
+                                <p>Ensure at least 2 guardians have your SheSafe notifications active.</p>
+                            </div>
+                        </div>
+
+                        <div class="check-item">
+                            <div class="check-badge">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4>Active Check-In Habit</h4>
+                                <p>Set a 15-30 min check-in before boarding cabs or walking isolated routes.</p>
+                            </div>
+                        </div>
+
+                        <div class="check-item">
+                            <div class="check-badge">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <h4>Instant Helpline Awareness</h4>
+                                <p>Know that dialing 112 connects to unified emergency response across India.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="safety-actions">
+                        <a href="{% url 'resources' %}" class="primary-btn">
+                            <i class="fa-solid fa-book-open"></i>
+                            <span>Read Complete Guides</span>
+                        </a>
+                        <a href="{% url 'checkin' %}" class="secondary-btn">
+                            <i class="fa-solid fa-location-arrow"></i>
+                            <span>Try Check-In Now</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= HOW IT WORKS ================= -->
+        <section class="how-it-works-section">
+            <div class="section-heading text-center">
+                <span class="badge-tag">SIMPLE 3-STEP SETUP</span>
+                <h2>Protected in less than 2 minutes</h2>
+                <p>No tedious configurations or setup hurdles. Start safeguarding your life immediately.</p>
+            </div>
+
+            <div class="steps-flow-grid">
+                <div class="step-card">
+                    <div class="step-badge">STEP 01</div>
+                    <div class="step-icon-wrap">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
+                    <h3>Create Your Free Account</h3>
+                    <p>Register securely using your name and email. No subscription fees or credit cards needed.</p>
+                </div>
+
+                <div class="step-connector">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-badge">STEP 02</div>
+                    <div class="step-icon-wrap">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <h3>Add Trusted Guardians</h3>
+                    <p>Save family and trusted friends with phone numbers so they receive instant SOS broadcasts.</p>
+                </div>
+
+                <div class="step-connector">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </div>
+
+                <div class="step-card">
+                    <div class="step-badge">STEP 03</div>
+                    <div class="step-icon-wrap">
+                        <i class="fa-solid fa-shield-heart"></i>
+                    </div>
+                    <h3>Navigate With Confidence</h3>
+                    <p>Use check-ins whenever traveling, log suspicious areas, and tap SOS if in danger.</p>
+                </div>
+            </div>
+
+            <div class="how-cta-center">
+                {% if user.is_authenticated %}
+                <a href="{% url 'trusted_contacts' %}" class="primary-btn pulse-effect">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <span>Add Trusted Contacts</span>
+                </a>
+                {% else %}
+                <a href="{% url 'register' %}" class="primary-btn pulse-effect">
+                    <i class="fa-solid fa-shield-heart"></i>
+                    <span>Create Your Free Account</span>
+                </a>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- ================= EMPOWERMENT / DARK ACCENT ================= -->
+        <section class="empowerment-section" id="empowerment">
+            <div class="empowerment-container">
+                <div class="empower-left">
+                    <span class="badge-tag light-tag">FUTURE &amp; GROWTH</span>
+                    <h2>Safety is your foundation.<br><span>Empowerment is your future.</span></h2>
+                    <p>
+                        True safety isn't just reacting to danger — it's cultivating the confidence, financial freedom, career growth, and digital skills to achieve everything you dream of.
+                    </p>
+
+                    <div class="empower-pills-list">
+                        <div class="emp-pill">
+                            <i class="fa-solid fa-graduation-cap"></i>
+                            <div>
+                                <strong>Skill &amp; Career Building</strong>
+                                <small>Learning programs</small>
+                            </div>
+                        </div>
+                        <div class="emp-pill">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                            <div>
+                                <strong>Legal Rights &amp; Laws</strong>
+                                <small>Know your protections</small>
+                            </div>
+                        </div>
+                        <div class="emp-pill">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                            <div>
+                                <strong>Mental Wellness</strong>
+                                <small>Support resources</small>
+                            </div>
+                        </div>
+                        <div class="emp-pill">
+                            <i class="fa-solid fa-globe"></i>
+                            <div>
+                                <strong>Cyber Literacy</strong>
+                                <small>Digital security</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'resources' %}" class="empower-main-btn">
+                        <span>Explore Empowerment Resources</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="empower-right">
+                    <div class="empower-stats-quad">
+                        <div class="quad-stat">
+                            <strong>100%</strong>
+                            <span>Free Community Tools</span>
+                        </div>
+                        <div class="quad-stat active-quad">
+                            <strong>24/7</strong>
+                            <span>Support Availability</span>
+                        </div>
+                        <div class="quad-stat active-quad">
+                            <strong>5+</strong>
+                            <span>Safety Resource Pillars</span>
+                        </div>
+                        <div class="quad-stat">
+                            <strong>&infin;</strong>
+                            <span>Limitless Potential</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= EMERGENCY HELPLINES DIRECT DIAL ================= -->
+        <section class="emergency-helplines-section" id="contact">
+            <div class="section-heading text-center">
+                <span class="badge-tag red-tag">INSTANT EMERGENCY ACCESS</span>
+                <h2>Official Helplines &amp; Emergency Dialers</h2>
+                <p>Click any card to automatically extract your current GPS coordinates and open your phone dialer.</p>
+            </div>
+
+            <div class="helplines-grid">
+                <!-- 112 -->
+                <div class="helpline-card card-112" onclick="handleEmergencyCall('112', 'National Emergency Response')">
+                    <div class="hl-badge">ALL-IN-ONE</div>
+                    <div class="hl-icon red-icon">
+                        <i class="fa-solid fa-phone"></i>
+                    </div>
+                    <div class="hl-info">
+                        <span>National Emergency</span>
+                        <h3>112</h3>
+                        <p>Unified emergency for police, ambulance, fire &amp; disaster relief.</p>
+                    </div>
+                    <button type="button" class="hl-dial-btn red-btn" onclick="event.stopPropagation(); handleEmergencyCall('112', 'National Emergency Response')">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>Call 112</span>
+                    </button>
+                </div>
+
+                <!-- 181 -->
+                <div class="helpline-card card-181" onclick="handleEmergencyCall('181', 'Women Helpline')">
+                    <div class="hl-badge">WOMEN SUPPORT</div>
+                    <div class="hl-icon purple-icon">
+                        <i class="fa-solid fa-person-dress"></i>
+                    </div>
+                    <div class="hl-info">
+                        <span>Women Helpline</span>
+                        <h3>181</h3>
+                        <p>24/7 dedicated support for women facing harassment, violence, or distress.</p>
+                    </div>
+                    <button type="button" class="hl-dial-btn purple-btn" onclick="event.stopPropagation(); handleEmergencyCall('181', 'Women Helpline')">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>Call 181</span>
+                    </button>
+                </div>
+
+                <!-- 100 -->
+                <div class="helpline-card card-100" onclick="handleEmergencyCall('100', 'Police Emergency')">
+                    <div class="hl-badge">LAW ENFORCEMENT</div>
+                    <div class="hl-icon blue-icon">
+                        <i class="fa-solid fa-building-shield"></i>
+                    </div>
+                    <div class="hl-info">
+                        <span>Police Emergency</span>
+                        <h3>100</h3>
+                        <p>Direct contact with local law enforcement control room.</p>
+                    </div>
+                    <button type="button" class="hl-dial-btn blue-btn" onclick="event.stopPropagation(); handleEmergencyCall('100', 'Police Emergency')">
+                        <i class="fa-solid fa-phone"></i>
+                        <span>Call 100</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Toast / Notification container -->
+            <div id="emergencyNotification" class="emergency-notification" role="alert" aria-live="polite">
+                <div class="notification-icon">
+                    <i class="fa-solid fa-location-dot"></i>
+                </div>
+                <div class="notification-content">
+                    <strong id="notificationTitle">Emergency Assistance</strong>
+                    <p id="notificationMessage">Preparing emergency assistance...</p>
+                    <a id="locationLink" href="#" target="_blank" rel="noopener" style="display:none;">
+                        <i class="fa-solid fa-map-location-dot"></i> View My Location
+                    </a>
+                </div>
+                <button type="button" class="notification-close" onclick="closeEmergencyNotification()" aria-label="Close notification">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- ================= CTA BANNER ================= -->
+        {% if not user.is_authenticated %}
+        <section class="cta-banner-section">
+            <div class="cta-card">
+                <div class="cta-glow-orb"></div>
+                <div class="cta-inner">
+                    <span class="badge-tag light-tag">START TODAY</span>
+                    <h2>Take control of your personal safety</h2>
+                    <p>Join thousands of women who navigate daily life with security, confidence, and peace of mind.</p>
+                    <div class="cta-btn-group">
+                        <a href="{% url 'register' %}" class="primary-btn large-btn pulse-effect">
+                            <i class="fa-solid fa-shield-heart"></i>
+                            <span>Create Free Account</span>
+                        </a>
+                        <a href="{% url 'login' %}" class="ghost-btn">
+                            <span>Already have an account? Sign In</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="site-footer">
+        <div class="footer-top">
+            <div class="footer-brand-col">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-shield-heart"></i>
+                    </div>
+                    <div>
+                        <h2>She<span>Safe</span></h2>
+                        <small>Safety &amp; Empowerment</small>
+                    </div>
+                </div>
+                <p class="footer-desc">
+                    SheSafe is a dedicated women's safety ecosystem connecting users with guardians, instant emergency response, proactive check-ins, and empowerment resources.
+                </p>
+                <div class="footer-socials">
+                    <a href="#" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fa-brands fa-linkedin"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links-col">
+                <h4>Quick Navigation</h4>
+                <a href="#home">Home</a>
+                <a href="#features">Platform Features</a>
+                <a href="#safety">Safety Awareness</a>
+                <a href="{% url 'resources' %}">Resources Library</a>
+                <a href="#empowerment">Empowerment</a>
+            </div>
+
+            <div class="footer-links-col">
+                <h4>Safety Tools</h4>
+                <a href="{% url 'checkin' %}">Safety Check-In</a>
+                <a href="{% url 'trusted_contacts' %}">Trusted Contacts</a>
+                <a href="{% url 'safety_report' %}">Safety Reports</a>
+                <a href="#contact">Emergency Helplines</a>
+                <a href="javascript:void(0)" onclick="openSOS()">Emergency SOS</a>
+            </div>
+
+            <div class="footer-links-col">
+                <h4>Your Account</h4>
+                {% if user.is_authenticated %}
+                <a href="{% url 'checkin' %}">Dashboard</a>
+                <a href="{% url 'trusted_contacts' %}">My Safety Circle</a>
+                <a href="{% url 'logout' %}">Logout ({{ user.username }})</a>
+                {% else %}
+                <a href="{% url 'login' %}">Sign In</a>
+                <a href="{% url 'register' %}">Create Account</a>
+                {% endif %}
+                <a href="{% url 'resources' %}">Safety Tips</a>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 SheSafe &bull; Women's Safety &amp; Empowerment Program. All rights reserved.</p>
+            <p>Designed with care for women's safety &amp; independence.</p>
+        </div>
+    </footer>
+
+    <!-- ================= SOS MODAL ================= -->
+    <div class="modal" id="sosModal" role="dialog" aria-modal="true" aria-labelledby="sosModalTitle">
+        <div class="modal-box">
+            <button class="close-modal" onclick="closeSOS()" aria-label="Close emergency modal">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="modal-icon pulse-alarm">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+
+            <h2 id="sosModalTitle">Emergency SOS Assistance</h2>
+            <p>If you are in immediate physical danger, contact the unified national emergency dispatch or call your primary guardian immediately.</p>
+
+            <div class="modal-actions-list">
+                <a href="tel:112" class="modal-call-btn red-btn">
+                    <i class="fa-solid fa-phone"></i>
+                    <span>Call National Emergency (112)</span>
+                </a>
+                <a href="tel:181" class="modal-call-btn purple-btn">
+                    <i class="fa-solid fa-person-dress"></i>
+                    <span>Call Women Helpline (181)</span>
+                </a>
+                <a href="{% url 'trusted_contacts' %}" class="modal-call-btn outline-modal-btn">
+                    <i class="fa-solid fa-user-shield"></i>
+                    <span>Broadcast SOS to Guardians</span>
+                </a>
+                <button onclick="closeSOS()" class="modal-cancel-btn">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Javascript -->
+    <script src="/static/script.js"></script>
+</body>
+</html>

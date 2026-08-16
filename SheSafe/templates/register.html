@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Create Account | SheSafe</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="/static/Login.css">
+</head>
+
+<body>
+
+<div class="login-page">
+
+    <div class="login-left">
+
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fa-solid fa-shield-heart"></i>
+            </div>
+
+            <div>
+                <h2>She<span>Safe</span></h2>
+                <small>Safety & Empowerment</small>
+            </div>
+        </div>
+
+        <div class="left-content">
+
+            <div class="welcome-icon">
+                <i class="fa-solid fa-user-plus"></i>
+            </div>
+
+            <h1>
+                Join the
+                <span>SheSafe</span> community.
+            </h1>
+
+            <p>
+                Create your account to start building your personal
+                safety network, start safety check-ins, submit reports,
+                and access emergency resources 24/7.
+            </p>
+
+            <div class="features">
+
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+
+                    <div>
+                        <strong>Emergency SOS & Alerts</strong>
+                        <small>Instant SMS with GPS coordinates</small>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+
+                    <div>
+                        <strong>Safety Check-In</strong>
+                        <small>Travel with peace of mind</small>
+                    </div>
+                </div>
+
+                <div class="feature">
+                    <div class="feature-icon">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+
+                    <div>
+                        <strong>Trusted Network</strong>
+                        <small>Connect with your closest circle</small>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="left-footer">
+            <span>© 2026 SheSafe</span>
+            <span>Women's Safety & Empowerment</span>
+        </div>
+
+    </div>
+
+
+    <div class="login-right">
+
+        <div class="login-box">
+
+            <div class="mobile-brand">
+                <div class="brand-icon">
+                    <i class="fa-solid fa-shield-heart"></i>
+                </div>
+
+                <h2>She<span>Safe</span></h2>
+            </div>
+
+            <div class="login-heading">
+
+                <span class="mini-title">GET STARTED</span>
+
+                <h1>Create your account</h1>
+
+                <p>
+                    Enter your details to register with SheSafe.
+                </p>
+
+                {% if error %}
+                <div class="login-error">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    {{ error }}
+                </div>
+                {% endif %}
+
+            </div>
+
+
+            <form id="registerForm" method="POST" action="{% url 'register' %}">
+                {% csrf_token %}
+
+                <div class="form-group">
+
+                    <label for="username">
+                        Username
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fa-regular fa-user"></i>
+
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            value="{{ username|default:'' }}"
+                            placeholder="Choose a username"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="email">
+                        Email Address
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fa-regular fa-envelope"></i>
+
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="{{ email|default:'' }}"
+                            placeholder="Enter your email address"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fa-solid fa-lock"></i>
+
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create a strong password (min 6 chars)"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="passwordToggle">
+
+                            <i class="fa-regular fa-eye"></i>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="confirm_password">
+                        Confirm Password
+                    </label>
+
+                    <div class="input-box">
+
+                        <i class="fa-solid fa-lock-open"></i>
+
+                        <input
+                            type="password"
+                            id="confirm_password"
+                            name="confirm_password"
+                            placeholder="Re-enter your password"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="login-btn">
+
+                    <span>Create Account</span>
+
+                    <i class="fa-solid fa-arrow-right"></i>
+
+                </button>
+
+
+                <div class="divider">
+                    <span>OR</span>
+                </div>
+
+
+                <div class="safe-note">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    <div>
+                        <strong>Private & Secure</strong>
+
+                        <p>
+                            Your personal contacts and reports are strictly
+                            private to your account.
+                        </p>
+                    </div>
+
+                </div>
+
+
+                <p class="register-text">
+
+                    Already have an account?
+
+                    <a href="{% url 'login' %}">
+                        Sign In
+                    </a>
+
+                </p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="/static/Login.js"></script>
+
+</body>
+</html>

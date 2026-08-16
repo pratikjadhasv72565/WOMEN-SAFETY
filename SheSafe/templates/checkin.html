@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Safety Check-In | SheSafe</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="/static/checkin.css">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <a href="/" class="logo">
+
+        <div class="logo-icon">
+            <i class="fa-solid fa-shield-heart"></i>
+        </div>
+
+        <div>
+            <h2>She<span>Safe</span></h2>
+            <small>Safety & Empowerment</small>
+        </div>
+
+    </a>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/checkin/" style="color:#7c3aed; font-weight:700;">Check-In</a>
+        <a href="/trusted-contacts/">Contacts</a>
+        <a href="/safety-report/">Report</a>
+        <a href="/resources/">Resources</a>
+    </nav>
+
+    <a href="/logout/" class="logout-btn">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+    </a>
+
+</header>
+
+
+<main class="checkin-page">
+
+    <div class="page-heading">
+
+        <span class="mini-title">PERSONAL SAFETY</span>
+
+        <h1>Safety <span>Check-In</span></h1>
+
+        <p>
+            Let your trusted contact know that you are safe
+            during travel, commuting, or other situations.
+        </p>
+
+    </div>
+
+
+    <section class="checkin-container">
+
+        <div class="status-card">
+
+            <div class="status-icon" {% if active_checkin %}style="background:#dcfce7; color:#15803d;"{% endif %}>
+                <i class="fa-solid fa-shield-heart"></i>
+            </div>
+
+            <span class="status-label">CURRENT STATUS</span>
+
+            {% if active_checkin %}
+            <h2 id="statusTitle">Check-In Active</h2>
+
+            <p id="statusText">
+                Safety check-in is active for <strong>{{ active_checkin.trusted_contact }}</strong>.
+                {% if active_checkin.message %}
+                <br><em>"{{ active_checkin.message }}"</em>
+                {% endif %}
+            </p>
+
+            <div class="status-badge" id="statusBadge" style="background:#dcfce7; color:#15803d;">
+                <i class="fa-solid fa-circle"></i>
+                Active ({{ active_checkin.duration_minutes }} min)
+            </div>
+            {% else %}
+            <h2 id="statusTitle">You're not checked in</h2>
+
+            <p id="statusText">
+                Start a safety check-in when you want
+                someone you trust to know you're safe.
+            </p>
+
+            <div class="status-badge" id="statusBadge">
+                <i class="fa-solid fa-circle"></i>
+                Not Active
+            </div>
+            {% endif %}
+
+        </div>
+
+
+        <div class="checkin-form-card">
+
+            {% if active_checkin %}
+            <h2>Active Check-In</h2>
+
+            <p class="form-description">
+                Started at {{ active_checkin.started_at|date:"h:i A" }} for {{ active_checkin.duration_minutes }} minutes with <strong>{{ active_checkin.trusted_contact }}</strong>.
+            </p>
+
+            <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:20px;">
+                <a href="{% url 'complete_checkin' active_checkin.id %}" class="safe-btn" style="text-align:center; display:block;">
+                    <i class="fa-solid fa-circle-check"></i>
+                    I'm Safe (End Check-In)
+                </a>
+
+                <a href="{% url 'complete_checkin' active_checkin.id %}" class="cancel-btn" style="text-align:center; display:block;">
+                    Cancel Check-In
+                </a>
+            </div>
+
+            <hr style="border:none; border-top:1px solid #eee; margin:20px 0;">
+
+            <h3 style="font-size:16px; margin-bottom:10px;">Start a New Check-In</h3>
+            {% else %}
+            <h2>Start a Check-In</h2>
+
+            <p class="form-description">
+                Set how long your check-in should remain active.
+            </p>
+            {% endif %}
+
+            <form method="POST" action="{% url 'checkin' %}" id="checkinForm">
+
+                {% csrf_token %}
+
+                <div class="form-group">
+
+                    <label for="duration">
+                        Check-In Duration
+                    </label>
+
+                    <select id="duration" name="duration" required>
+
+                        <option value="15">
+                            15 Minutes
+                        </option>
+
+                        <option value="30" selected>
+                            30 Minutes
+                        </option>
+
+                        <option value="60">
+                            1 Hour
+                        </option>
+
+                        <option value="120">
+                            2 Hours
+                        </option>
+
+                        <option value="240">
+                            4 Hours
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="contact">
+                        Trusted Contact
+                    </label>
+
+                    {% if contacts %}
+                    <select id="contactSelect" onchange="if(this.value){document.getElementById('contact').value=this.value;}" style="margin-bottom:8px;">
+                        <option value="">-- Choose from your contacts --</option>
+                        {% for c in contacts %}
+                        <option value="{{ c.name }}">{{ c.name }} ({{ c.get_relationship_display }}{% if c.is_primary %} - Primary{% endif %})</option>
+                        {% endfor %}
+                    </select>
+                    {% endif %}
+
+                    <input
+                        type="text"
+                        id="contact"
+                        name="trusted_contact"
+                        placeholder="Enter trusted contact name"
+                        {% if contacts and contacts.0.is_primary %}value="{{ contacts.0.name }}"{% endif %}
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="message">
+                        Optional Message
+                    </label>
+
+                    <textarea
+                        id="message"
+                        name="message"
+                        placeholder="Example: I'm travelling home. I'll check in when I arrive."
+                    ></textarea>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="start-btn"
+                    id="startCheckin">
+
+                    <i class="fa-solid fa-shield-halved"></i>
+
+                    Start Safety Check-In
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </section>
+
+
+    <section class="info-section">
+
+        <div class="info-card" onclick="focusDuration()">
+
+            <i class="fa-solid fa-clock"></i>
+
+            <div>
+                <h3>Set a duration</h3>
+                <p>
+                    Choose how long your check-in should remain active.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="info-card" onclick="focusContact()">
+
+            <i class="fa-solid fa-user-shield"></i>
+
+            <div>
+                <h3>Trusted contact</h3>
+                <p>
+                    Keep a trusted person informed about your safety.
+                </p>
+            </div>
+
+        </div>
+
+
+        <div class="info-card" onclick="focusContact()">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+            <div>
+                <h3>Confirm you're safe</h3>
+                <p>
+                    End the check-in when you reach your destination safely.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script src="/static/checkin.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Trusted Contacts | SheSafe</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
+        rel="stylesheet">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="/static/trusted_contacts.css">
+</head>
+
+<body>
+
+<header class="navbar">
+
+    <a href="/" class="brand">
+
+        <div class="brand-icon">
+            <i class="fa-solid fa-shield-heart"></i>
+        </div>
+
+        <div>
+            <h2>She<span>Safe</span></h2>
+            <small>Safety & Empowerment</small>
+        </div>
+
+    </a>
+
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/#safety">Safety</a>
+        <a href="{% url 'resources' %}">Resources</a>
+        <a href="/#empowerment">Empowerment</a>
+    </nav>
+
+
+    <a href="/logout/" class="logout-btn">
+
+        <i class="fa-solid fa-right-from-bracket"></i>
+
+        Logout
+
+    </a>
+
+</header>
+
+
+<main>
+
+<!-- ================= HERO ================= -->
+
+<section class="page-hero">
+
+    <div class="hero-content">
+
+        <div class="badge">
+
+            <i class="fa-solid fa-user-shield"></i>
+
+            TRUSTED SUPPORT
+
+        </div>
+
+
+        <h1>
+            Your <span>Trusted Contacts.</span>
+        </h1>
+
+
+        <p>
+            Keep important people close when you need support.
+            Your trusted contacts can be quickly called or alerted
+            with your current location during an emergency.
+        </p>
+
+
+        <div class="hero-features">
+
+            <div>
+                <i class="fa-solid fa-phone"></i>
+                <span>Quick Call</span>
+            </div>
+
+            <div>
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Live Location</span>
+            </div>
+
+            <div>
+                <i class="fa-solid fa-bell"></i>
+                <span>Emergency Alert</span>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="hero-visual">
+
+        <div class="hero-circle">
+
+            <i class="fa-solid fa-people-roof"></i>
+
+        </div>
+
+        <div class="pulse pulse-one"></div>
+
+        <div class="pulse pulse-two"></div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= CONTACTS SECTION ================= -->
+
+<section class="contacts-section">
+
+    <div class="section-heading">
+
+        <span class="mini-title">
+            SAFETY NETWORK
+        </span>
+
+        <h2>
+            Build your trusted circle.
+        </h2>
+
+        <p>
+            Add people you trust and alert them quickly whenever
+            you need help.
+        </p>
+
+    </div>
+
+
+    <div class="contacts-layout">
+
+
+        <!-- ================= ADD CONTACT ================= -->
+
+        <div class="add-contact-card">
+
+            <div class="card-header">
+
+                <div class="header-icon">
+
+                    <i class="fa-solid fa-user-plus"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h3>
+                        Add Trusted Contact
+                    </h3>
+
+                    <p>
+                        Create a new safety contact.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <form
+                method="POST"
+                action="{% url 'add_contact' %}"
+                id="contactForm">
+
+                {% csrf_token %}
+
+
+                <!-- NAME -->
+
+                <div class="form-group">
+
+                    <label for="name">
+                        Full Name
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <i class="fa-solid fa-user"></i>
+
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="Enter contact name"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PHONE -->
+
+                <div class="form-group">
+
+                    <label for="phone">
+                        Phone Number
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <i class="fa-solid fa-phone"></i>
+
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="Enter phone number"
+                            required>
+
+                    </div>
+
+                </div>
+
+
+                <!-- RELATIONSHIP -->
+
+                <div class="form-group">
+
+                    <label for="relationship">
+                        Relationship
+                    </label>
+
+
+                    <div class="input-wrapper">
+
+                        <i class="fa-solid fa-people-arrows"></i>
+
+
+                        <select
+                            id="relationship"
+                            name="relationship"
+                            required>
+
+                            <option value="">
+                                Select relationship
+                            </option>
+
+                            <option value="parent">
+                                Parent
+                            </option>
+
+                            <option value="sibling">
+                                Sibling
+                            </option>
+
+                            <option value="friend">
+                                Friend
+                            </option>
+
+                            <option value="relative">
+                                Relative
+                            </option>
+
+                            <option value="guardian">
+                                Guardian
+                            </option>
+
+                            <option value="other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- PRIMARY CONTACT -->
+
+                <label class="primary-option">
+
+                    <input
+                        type="checkbox"
+                        name="is_primary">
+
+                    <span class="custom-check">
+
+                        <i class="fa-solid fa-check"></i>
+
+                    </span>
+
+
+                    <span>
+
+                        <strong>
+                            Make primary contact
+                        </strong>
+
+                        <small>
+                            Use this person as your main trusted contact.
+                        </small>
+
+                    </span>
+
+                </label>
+
+
+                <!-- SUBMIT -->
+
+                <button
+                    type="submit"
+                    class="add-btn">
+
+                    <i class="fa-solid fa-plus"></i>
+
+                    Add Trusted Contact
+
+                </button>
+
+            </form>
+
+        </div>
+
+
+        <!-- ================= CONTACT LIST ================= -->
+
+        <div class="contact-list-area">
+
+
+            <div class="list-heading">
+
+                <div>
+
+                    <span class="mini-title">
+                        MY CONTACTS
+                    </span>
+
+                    <h2>
+                        Trusted people
+                    </h2>
+
+                </div>
+
+
+                <div class="contact-count">
+
+                    {{ contacts|length }}
+
+                    <span>
+                        Contacts
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            {% if contacts %}
+
+
+            <div class="contact-list">
+
+
+                {% for contact in contacts %}
+
+
+                <!-- CONTACT CARD -->
+
+                <div
+                    class="contact-card {% if contact.is_primary %}primary-contact{% endif %}"
+                    data-id="{{ contact.id }}"
+                    data-name="{{ contact.name }}"
+                    data-phone="{{ contact.phone }}">
+
+
+                    <!-- AVATAR -->
+
+                    <div class="contact-avatar">
+
+                        {{ contact.name|first|upper }}
+
+                    </div>
+
+
+                    <!-- CONTACT INFORMATION -->
+
+                    <div class="contact-info">
+
+
+                        <div class="name-row">
+
+                            <h3>
+                                {{ contact.name }}
+                            </h3>
+
+
+                            {% if contact.is_primary %}
+
+                            <span class="primary-badge">
+
+                                <i class="fa-solid fa-star"></i>
+
+                                Primary
+
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <span class="relationship">
+
+                            <i class="fa-solid fa-user-group"></i>
+
+                            {{ contact.get_relationship_display }}
+
+                        </span>
+
+
+                        <a
+                            href="tel:{{ contact.phone }}"
+                            class="phone">
+
+                            <i class="fa-solid fa-phone"></i>
+
+                            {{ contact.phone }}
+
+                        </a>
+
+                    </div>
+
+
+                    <!-- ACTION BUTTONS -->
+
+                    <div class="contact-actions">
+
+
+                        <!-- CALL -->
+
+                        <a
+                            href="tel:{{ contact.phone }}"
+                            class="action-btn call-btn"
+                            title="Call {{ contact.name }}">
+
+                            <i class="fa-solid fa-phone"></i>
+
+                        </a>
+
+
+                        <!-- EMERGENCY ALERT -->
+
+                        <button
+                            type="button"
+                            class="action-btn alert-btn"
+                            data-id="{{ contact.id }}"
+                            data-name="{{ contact.name }}"
+                            data-phone="{{ contact.phone }}"
+                            title="Emergency Alert">
+
+                            <i class="fa-solid fa-bell"></i>
+
+                        </button>
+
+
+                        <!-- LOCATION -->
+
+                        <button
+                            type="button"
+                            class="action-btn location-btn"
+                            data-id="{{ contact.id }}"
+                            data-name="{{ contact.name }}"
+                            data-phone="{{ contact.phone }}"
+                            title="Share Location">
+
+                            <i class="fa-solid fa-location-dot"></i>
+
+                        </button>
+
+
+                        <!-- DELETE -->
+
+                        <form
+                            method="POST"
+                            action="{% url 'delete_contact' contact.id %}"
+                            class="delete-form">
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="action-btn delete-btn"
+                                title="Delete">
+
+                                <i class="fa-solid fa-trash"></i>
+
+                            </button>
+
+                        </form>
+
+
+                    </div>
+
+                </div>
+
+
+                {% endfor %}
+
+
+            </div>
+
+
+            {% else %}
+
+
+            <!-- EMPTY STATE -->
+
+            <div class="empty-state">
+
+                <div class="empty-icon">
+
+                    <i class="fa-solid fa-user-group"></i>
+
+                </div>
+
+
+                <h3>
+                    No trusted contacts yet
+                </h3>
+
+
+                <p>
+                    Add someone you trust to build your personal
+                    safety network.
+                </p>
+
+            </div>
+
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= EMERGENCY INFORMATION ================= -->
+
+<section class="emergency-info">
+
+    <div class="emergency-info-card">
+
+        <div class="emergency-info-icon">
+
+            <i class="fa-solid fa-triangle-exclamation"></i>
+
+        </div>
+
+
+        <div>
+
+            <h3>
+                Emergency Alert System
+            </h3>
+
+
+            <p>
+                Use the alert button to prepare an emergency SMS
+                containing your current Google Maps location.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================= PRIVACY ================= -->
+
+<section class="privacy-section">
+
+    <div class="privacy-card">
+
+        <div class="privacy-icon">
+
+            <i class="fa-solid fa-lock"></i>
+
+        </div>
+
+
+        <div>
+
+            <h3>
+                Your contacts are private
+            </h3>
+
+
+            <p>
+                Your trusted contacts are connected to your account
+                and are not displayed to other users.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- ================= EMERGENCY MODAL ================= -->
+
+<div
+    class="alert-modal"
+    id="alertModal">
+
+
+    <div class="alert-box">
+
+
+        <!-- CLOSE -->
+
+        <button
+            type="button"
+            class="close-alert"
+            id="closeAlert">
+
+            <i class="fa-solid fa-xmark"></i>
+
+        </button>
+
+
+        <!-- ICON -->
+
+        <div class="alert-icon">
+
+            <i class="fa-solid fa-bell"></i>
+
+        </div>
+
+
+        <h2 id="modalTitle">
+            Emergency Alert
+        </h2>
+
+
+        <p id="alertMessage">
+            Preparing emergency alert...
+        </p>
+
+
+        <!-- PROGRESS -->
+
+        <div class="alert-progress">
+
+            <div id="progressBar"></div>
+
+        </div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="alert-actions">
+
+
+            <!-- SMS -->
+
+            <a
+                id="sendAlertBtn"
+                class="send-alert-btn"
+                href="#"
+                style="display: none;">
+
+                <i class="fa-solid fa-message"></i>
+
+                Open Emergency SMS
+
+            </a>
+
+
+            <!-- MAP -->
+
+            <a
+                id="mapBtn"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="map-btn"
+                style="display: none;">
+
+                <i class="fa-solid fa-map-location-dot"></i>
+
+                View Google Maps Location
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <div class="footer-content">
+
+
+        <!-- FOOTER BRAND -->
+
+        <div class="footer-brand">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+
+                    <i class="fa-solid fa-shield-heart"></i>
+
+                </div>
+
+
+                <div>
+
+                    <h2>
+                        She<span>Safe</span>
+                    </h2>
+
+                    <small>
+                        Safety & Empowerment
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <p>
+                Creating awareness, promoting safety and
+                empowering women through technology.
+            </p>
+
+        </div>
+
+
+        <!-- PLATFORM -->
+
+        <div>
+
+            <h4>
+                Platform
+            </h4>
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/#safety">
+                Safety
+            </a>
+
+            <a href="{% url 'resources' %}">
+                Resources
+            </a>
+
+            <a href="/#empowerment">
+                Empowerment
+            </a>
+
+        </div>
+
+
+        <!-- SAFETY -->
+
+        <div>
+
+            <h4>
+                Safety
+            </h4>
+
+
+            <a href="/trusted-contacts/">
+                Trusted Contacts
+            </a>
+
+
+            <a href="/safety-report/">
+                Safety Report
+            </a>
+
+
+            <a href="/#contact">
+                Emergency Help
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER BOTTOM -->
+
+    <div class="footer-bottom">
+
+        <p>
+            © 2026 SheSafe. Women's Safety & Empowerment Program.
+        </p>
+
+        <p>
+            Designed for awareness & empowerment.
+        </p>
+
+    </div>
+
+</footer>
+
+
+<!-- ================= JAVASCRIPT ================= -->
+
+<script src="/static/trusted_contacts.js"></script>
+
+</body>
+
+</html>
+```

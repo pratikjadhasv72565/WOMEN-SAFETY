@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Safety Resources | SheSafe</title>
+    <meta name="description" content="Explore practical safety resources on SheSafe — personal safety, digital safety, home safety, travel tips and emergency preparedness.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/resources-page.css">
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="logo">
+        <div class="logo-icon">
+            <i class="fa-solid fa-shield-heart"></i>
+        </div>
+
+        <div>
+            <h2>She<span>Safe</span></h2>
+            <small>Safety &amp; Empowerment</small>
+        </div>
+    </div>
+
+    <nav id="navMenu">
+        <a href="/">Home</a>
+        <a href="/#safety">Safety</a>
+        <a href="{% url 'resources' %}" class="active">Resources</a>
+        <a href="/#empowerment">Empowerment</a>
+        <a href="/#contact">Help</a>
+    </nav>
+
+    <div class="nav-actions">
+        <button id="themeBtn" class="icon-btn">
+            <i class="fa-solid fa-moon"></i>
+        </button>
+
+        <button class="sos-small" onclick="openSOS()">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            SOS
+        </button>
+
+        <button class="menu-btn" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+    </div>
+</header>
+
+
+<main>
+
+    <section class="resources-hero">
+
+        <div class="hero-content">
+
+            <span class="mini-title">
+                SHE SAFE RESOURCES
+            </span>
+
+            <h1>
+                Knowledge helps you
+                <span>stay prepared.</span>
+            </h1>
+
+            <p>
+                Explore practical safety information designed to
+                help you make informed decisions in everyday life,
+                online spaces, travel, and emergencies.
+            </p>
+
+            <div class="hero-actions">
+
+                <a href="#resource-list" class="primary-btn">
+                    <i class="fa-solid fa-book-open"></i>
+                    Explore Resources
+                </a>
+
+                <a href="/trusted-contacts/" class="secondary-btn">
+                    <i class="fa-solid fa-user-shield"></i>
+                    Trusted Contacts
+                </a>
+
+            </div>
+
+        </div>
+
+        <div class="hero-visual">
+
+            <div class="visual-glow"></div>
+
+            <div class="resource-orbit orbit-one">
+                <i class="fa-solid fa-shield-halved"></i>
+            </div>
+
+            <div class="resource-orbit orbit-two">
+                <i class="fa-solid fa-mobile-screen-button"></i>
+            </div>
+
+            <div class="resource-orbit orbit-three">
+                <i class="fa-solid fa-location-dot"></i>
+            </div>
+
+            <div class="main-resource-icon">
+                <i class="fa-solid fa-book-open-reader"></i>
+            </div>
+
+        </div>
+
+    </section>
+
+    <section class="resource-section" id="resource-list">
+
+        <div class="section-heading">
+
+            <span class="mini-title">
+                SAFETY LIBRARY
+            </span>
+
+            <h2>
+                Explore safety topics
+            </h2>
+
+            <p>
+                Choose a topic and learn simple, practical ways
+                to improve your awareness and preparedness.
+            </p>
+
+        </div>
+
+        <div class="resource-grid">
+
+            <article class="resource-card featured-card">
+
+                <div class="card-icon">
+                    <i class="fa-solid fa-shield-halved"></i>
+                </div>
+
+                <span class="card-label">
+                    ESSENTIAL
+                </span>
+
+                <h3>
+                    Personal Safety
+                </h3>
+
+                <p>
+                    Learn everyday awareness, planning and
+                    preparedness techniques for different situations.
+                </p>
+
+                <ul>
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Situational awareness
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Safety planning
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Emergency preparation
+                    </li>
+                </ul>
+
+                <a href="#personal-safety" class="resource-link">
+                    Read Guide
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </article>
+
+            <article class="resource-card">
+
+                <div class="card-icon">
+                    <i class="fa-solid fa-mobile-screen-button"></i>
+                </div>
+
+                <span class="card-label">
+                    ONLINE
+                </span>
+
+                <h3>
+                    Digital Safety
+                </h3>
+
+                <p>
+                    Learn ways to protect your accounts, devices,
+                    personal information and online privacy.
+                </p>
+
+                <ul>
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Account security
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Privacy awareness
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Scam awareness
+                    </li>
+                </ul>
+
+                <a href="#digital-safety" class="resource-link">
+                    Read Guide
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </article>
+
+            <article class="resource-card">
+
+                <div class="card-icon">
+                    <i class="fa-solid fa-house"></i>
+                </div>
+
+                <span class="card-label">
+                    HOME
+                </span>
+
+                <h3>
+                    Home Safety
+                </h3>
+
+                <p>
+                    Helpful ideas for creating a safer and more
+                    prepared home environment.
+                </p>
+
+                <ul>
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Emergency planning
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Important contacts
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Basic precautions
+                    </li>
+                </ul>
+
+                <a href="#home-safety" class="resource-link">
+                    Read Guide
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </article>
+
+            <article class="resource-card">
+
+                <div class="card-icon">
+                    <i class="fa-solid fa-route"></i>
+                </div>
+
+                <span class="card-label">
+                    TRAVEL
+                </span>
+
+                <h3>
+                    Travel Safety
+                </h3>
+
+                <p>
+                    Plan journeys thoughtfully and stay aware while
+                    travelling or commuting.
+                </p>
+
+                <ul>
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Route planning
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Trusted contacts
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Check-in planning
+                    </li>
+                </ul>
+
+                <a href="#travel-safety" class="resource-link">
+                    Read Guide
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </article>
+
+            <article class="resource-card">
+
+                <div class="card-icon">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+
+                <span class="card-label">
+                    EMERGENCY
+                </span>
+
+                <h3>
+                    Emergency Preparedness
+                </h3>
+
+                <p>
+                    Understand what to prepare before an emergency
+                    and where to find appropriate assistance.
+                </p>
+
+                <ul>
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Emergency contacts
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Safety information
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Personal safety plan
+                    </li>
+                </ul>
+
+                <a href="#emergency" class="resource-link">
+                    Read Guide
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </article>
+
+            <article class="resource-card">
+
+                <div class="card-icon">
+                    <i class="fa-solid fa-user-lock"></i>
+                </div>
+
+                <span class="card-label">
+                    PRIVACY
+                </span>
+
+                <h3>
+                    Privacy Awareness
+                </h3>
+
+                <p>
+                    Learn how to think carefully about personal
+                    information and privacy in digital spaces.
+                </p>
+
+                <ul>
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Personal information
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Privacy settings
+                    </li>
+
+                    <li>
+                        <i class="fa-solid fa-check"></i>
+                        Safer online habits
+                    </li>
+                </ul>
+
+                <a href="#privacy" class="resource-link">
+                    Read Guide
+                    <i class="fa-solid fa-arrow-right"></i>
+                </a>
+
+            </article>
+
+        </div>
+
+    </section>
+
+    <section class="guide-section" id="personal-safety">
+
+        <div class="guide-content">
+
+            <span class="mini-title">
+                PERSONAL SAFETY
+            </span>
+
+            <h2>
+                Stay aware.
+                <span>Stay prepared.</span>
+            </h2>
+
+            <p>
+                Personal safety starts with awareness and preparation.
+                Pay attention to your surroundings, plan ahead when
+                possible, and keep trusted people informed when appropriate.
+            </p>
+
+            <div class="guide-points">
+
+                <div>
+                    <i class="fa-solid fa-eye"></i>
+                    <strong>Stay aware</strong>
+                    <small>Pay attention to your surroundings.</small>
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-map"></i>
+                    <strong>Plan ahead</strong>
+                    <small>Think about routes and safe places.</small>
+                </div>
+
+                <div>
+                    <i class="fa-solid fa-people-group"></i>
+                    <strong>Stay connected</strong>
+                    <small>Keep trusted people informed when needed.</small>
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="guide-visual">
+            <i class="fa-solid fa-user-shield"></i>
+        </div>
+
+    </section>
+
+    <section class="topic-section" id="digital-safety">
+
+        <div class="topic-icon">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+        </div>
+
+        <div>
+
+            <span class="mini-title">
+                DIGITAL SAFETY
+            </span>
+
+            <h2>
+                Protect your digital space.
+            </h2>
+
+            <p>
+                Use strong passwords, enable available security
+                features, review privacy settings, and be cautious
+                before sharing personal information online.
+            </p>
+
+        </div>
+
+    </section>
+
+    <section class="topic-section" id="home-safety">
+
+        <div class="topic-icon">
+            <i class="fa-solid fa-house"></i>
+        </div>
+
+        <div>
+
+            <span class="mini-title">
+                HOME SAFETY
+            </span>
+
+            <h2>
+                Create a prepared home.
+            </h2>
+
+            <p>
+                Keep important emergency numbers accessible,
+                discuss emergency plans with trusted people,
+                and make sure everyone knows where to get help.
+            </p>
+
+        </div>
+
+    </section>
+
+    <section class="topic-section" id="travel-safety">
+
+        <div class="topic-icon">
+            <i class="fa-solid fa-route"></i>
+        </div>
+
+        <div>
+
+            <span class="mini-title">
+                TRAVEL SAFETY
+            </span>
+
+            <h2>
+                Plan your journey.
+            </h2>
+
+            <p>
+                Before travelling, consider your route, keep your
+                phone available, use trusted transportation where
+                possible, and let someone you trust know your plans
+                when appropriate.
+            </p>
+
+        </div>
+
+    </section>
+
+    <section class="emergency-section" id="emergency">
+
+        <div>
+
+            <span class="mini-title">
+                EMERGENCY PREPAREDNESS
+            </span>
+
+            <h2>
+                Know where to get help.
+            </h2>
+
+            <p>
+                If there is an immediate emergency, move toward a
+                safer location when possible and contact the appropriate
+                emergency service.
+            </p>
+
+        </div>
+
+        <a href="/#contact" class="emergency-btn">
+            <i class="fa-solid fa-phone"></i>
+            Emergency Contacts
+        </a>
+
+    </section>
+
+    <section class="topic-section" id="privacy">
+
+        <div class="topic-icon">
+            <i class="fa-solid fa-user-lock"></i>
+        </div>
+
+        <div>
+
+            <span class="mini-title">
+                PRIVACY AWARENESS
+            </span>
+
+            <h2>
+                Think before you share.
+            </h2>
+
+            <p>
+                Review the information you share online, use privacy
+                controls when available, and avoid sharing sensitive
+                personal details with people or services you do not trust.
+            </p>
+
+        </div>
+
+    </section>
+
+    <section class="resource-cta">
+
+        <div class="cta-icon">
+            <i class="fa-solid fa-shield-heart"></i>
+        </div>
+
+        <div>
+
+            <span class="mini-title">
+                YOUR SAFETY NETWORK
+            </span>
+
+            <h2>
+                Keep trusted people close.
+            </h2>
+
+            <p>
+                Add trusted contacts to your SheSafe safety network
+                so their information is available when you need it.
+            </p>
+
+        </div>
+
+        <a href="/trusted-contacts/" class="primary-btn">
+            Manage Trusted Contacts
+            <i class="fa-solid fa-arrow-right"></i>
+        </a>
+
+    </section>
+
+</main>
+
+<footer>
+
+    <div class="footer-main">
+
+        <div class="footer-brand">
+
+            <a href="/" class="brand">
+
+                <div class="brand-icon">
+                    <i class="fa-solid fa-shield-heart"></i>
+                </div>
+
+                <div>
+                    <h2>She<span>Safe</span></h2>
+                    <small>Safety &amp; Empowerment</small>
+                </div>
+
+            </a>
+
+            <p>
+                Creating awareness, promoting safety and
+                empowering women through technology.
+            </p>
+
+        </div>
+
+        <div class="footer-links">
+
+            <h4>Platform</h4>
+
+            <a href="/">Home</a>
+            <a href="/resources/">Resources</a>
+            <a href="/trusted-contacts/">Trusted Contacts</a>
+
+        </div>
+
+        <div class="footer-links">
+
+            <h4>Safety</h4>
+
+            <a href="/#safety">Safety Tips</a>
+            <a href="/safety-report/">Safety Report</a>
+            <a href="/#contact">Emergency Help</a>
+
+        </div>
+
+        <div class="footer-links">
+
+            <h4>Support</h4>
+
+            <a href="/#contact">Help</a>
+            <a href="/trusted-contacts/">Safety Network</a>
+
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+
+        <p>
+            &copy; 2026 SheSafe. Women's Safety &amp; Empowerment Program.
+        </p>
+
+        <p>
+            Designed for awareness &amp; empowerment.
+        </p>
+
+    </div>
+
+</footer>
+
+<script src="/static/script.js"></script>
+<script src="/static/resources.js"></script>
+
+</body>
+</html>
