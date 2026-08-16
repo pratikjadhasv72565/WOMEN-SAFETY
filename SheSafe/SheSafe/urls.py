@@ -19,6 +19,12 @@ urlpatterns = [
 
     path("logout/", views.logout_user, name="logout"),
 
+    # Mobile JSON Auth APIs
+    path("accounts/csrf/", views.api_csrf, name="api_csrf"),
+    path("accounts/login/api/", views.api_login, name="api_login"),
+    path("accounts/register/api/", views.api_register, name="api_register"),
+
+
     path("checkin/", safety_views.checkin, name="checkin"),
 
     path(

@@ -154,3 +154,110 @@ def logout_user(request):
     return redirect("login")
 
 
+# ================= MOBILE REST/JSON APIs =================
+
+from django.http import JsonResponse
+from django.middleware.csrf import get_token
+from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
+import json
+
+
+def api_csrf(request):
+    """Provides a fresh CSRF token for mobile app clients."""
+    token = get_token(request)
+    return JsonResponse({"csrfToken": token, "authenticated": request.user.is_authenticated})
+
+
+@csrf_exempt
+def api_login(request):
+    """JSON API for mobile app login."""
+    if request.method != "POST":
+        return JsonResponse({"success": False, "message": "POST required"}, status=405)
+
+    try:
+        data = json.loads(request.body.decode("utf-8")) if request.body else request.POST
+    except Exception:
+        data = request.POST
+
+    login_input = data.get("username", "").strip()
+    password = data.get("password", "")
+
+    if not login_input or not password:
+        return JsonResponse({"success": False, "message": "Username and password required."}, status=400)
+
+    user = authenticate(request, username=login_input, password=password)
+
+    if user is None and "@" in login_input:
+        try:
+            user_obj = User.objects.filter(email__iexact=login_input).first()
+            if user_obj:
+                user = authenticate(request, username=user_obj.username, password=password)
+        except Exception:
+            user = None
+
+    if user is not None:
+        login(request, user)
+        return JsonResponse({
+            "success": True,
+            "username": user.username,
+            "email": user.email,
+        })
+
+    return JsonResponse({"success": False, "message": "Invalid username or password."}, status=401)
+
+
+@csrf_exempt
+def api_register(request):
+    """JSON API for mobile app registration."""
+    if request.method != "POST":
+        return JsonResponse({"success": False, "message": "POST required"}, status=405)
+
+    try:
+        data = json.loads(request.body.decode("utf-8")) if request.body else request.POST
+    except Exception:
+        data = request.POST
+
+    username = data.get("username", "").strip()
+    email = data.get("email", "").strip().lower()
+    phone = data.get("phone", "").strip()
+    password = data.get("password", "")
+    confirm_password = data.get("confirm_password", "")
+
+    if not username or not email or not phone or not password or not confirm_password:
+        return JsonResponse({"success": False, "message": "Please fill in all fields."}, status=400)
+
+    if len(username) < 3 or len(username) > 30:
+        return JsonResponse({"success": False, "message": "Username must be between 3 and 30 characters."}, status=400)
+
+    if not re.match(r"^[a-zA-Z0-9_]+$", username):
+        return JsonResponse({"success": False, "message": "Username can only contain letters, numbers, and underscores."}, status=400)
+
+    if User.objects.filter(username__iexact=username).exists():
+        return JsonResponse({"success": False, "message": f"Username '{username}' is already taken."}, status=400)
+
+    try:
+        validate_email(email)
+    except ValidationError:
+        return JsonResponse({"success": False, "message": "Invalid email address."}, status=400)
+
+    if User.objects.filter(email__iexact=email).exists():
+        return JsonResponse({"success": False, "message": "Email already registered."}, status=400)
+
+    cleaned_phone = re.sub(r"[\s\-\(\)]", "", phone)
+    if not re.match(r"^(\+?[1-9]\d{0,3})?[0-9]{10}$", cleaned_phone) and not re.match(r"^\+?[0-9]{10,15}$", cleaned_phone):
+        return JsonResponse({"success": False, "message": "Please enter a valid phone number."}, status=400)
+
+    if len(password) < 8:
+        return JsonResponse({"success": False, "message": "Password must be at least 8 characters long."}, status=400)
+
+    if password != confirm_password:
+        return JsonResponse({"success": False, "message": "Passwords do not match."}, status=400)
+
+    user = User.objects.create_user(username=username, email=email, password=password)
+    UserProfile.objects.create(user=user, phone_number=phone)
+    login(request, user)
+
+    return JsonResponse({"success": True, "username": user.username, "email": user.email})
+
+
+
