@@ -42,98 +42,127 @@ function getCookie(name) {
 
 
 function openSOS() {
-    const modal = document.getElementById("sosModal");
+    const modal    = document.getElementById("sosModal");
     const modalBox = document.getElementById("sosModalBox");
 
     if (modal) modal.classList.add("show");
     if (!modalBox) return;
 
-    // Read primary contact data embedded server-side (no fetch needed)
-    const phone     = modalBox.dataset.phone       || "";
-    const name      = modalBox.dataset.name        || "Primary Contact";
     const hasContact = modalBox.dataset.hasContact === "true";
-
-    const statusText = document.getElementById("sosStatusText");
     const smsBtn     = document.getElementById("sosPrimarySmsBtn");
 
     function setStatus(msg) {
-        if (statusText) statusText.textContent = msg;
+        const el = document.getElementById("sosStatusText");
+        if (el) el.textContent = msg;
     }
 
-    // ── Helper: build and launch the SMS intent with optional map URL ──
-    function launchSMS(mapURL) {
-        if (!phone || !hasContact) return;
-
-        const body = mapURL
-            ? "🚨 EMERGENCY SOS - SheSafe\n\nI need immediate help! Please call me right away.\n\n📍 My live location:\n" + mapURL + "\n\nPlease reach me immediately!"
-            : "🚨 EMERGENCY SOS - SheSafe\n\nI need immediate help! Please call me right away.";
-
-        const smsHref = "sms:" + phone + "?body=" + encodeURIComponent(body);
-
-        // Update the SMS button so user can re-tap if needed
-        if (smsBtn) {
-            smsBtn.href = smsHref;
-            smsBtn.querySelector("span").textContent =
-                mapURL ? "💬 SMS " + name + " (location included ✓)" : "💬 SMS " + name;
-        }
-
-        // Auto-launch the SMS app
-        window.location.href = smsHref;
-    }
-
-    // ── Step 1: Immediately send a basic SOS SMS (no location yet) ──
-    setStatus("📡 Getting your location to include in SMS...");
-
-    if (!hasContact || !phone) {
+    if (!hasContact) {
         setStatus("⚠️ No primary contact set. Use the emergency numbers below.");
         return;
     }
 
-    // ── Step 2: Try to get GPS in the background with a short timeout ──
-    // If GPS arrives within 4 s → send SMS with map link.
-    // If GPS times out → send SMS without location (already dispatched above).
+    setStatus("📡 Activating emergency SOS...");
 
-    let smsSent = false;
-
-    const locationTimeout = setTimeout(function () {
-        if (!smsSent) {
-            smsSent = true;
-            setStatus("⚠️ Location unavailable. Sending SOS SMS without location...");
-            launchSMS(null);
-        }
-    }, 4000); // 4-second max wait for GPS
-
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            function (position) {
-                if (smsSent) return; // already sent without location
-                clearTimeout(locationTimeout);
-                smsSent = true;
-
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-                const mapURL = "https://maps.google.com/?q=" + lat + "," + lng;
-
-                setStatus("📍 Location obtained! Sending emergency SMS with live location...");
-                launchSMS(mapURL);
-            },
-            function () {
-                // Permission denied or unavailable — timeout handler will fire
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 3500,
-                maximumAge: 0
+    // ── POST to /contacts/sos/ and return the sms_url from server ──────────
+    function fetchSOSUrl(lat, lng) {
+        return new Promise(function (resolve, reject) {
+            const csrfToken = getCookie("csrftoken");
+            const form      = new FormData();
+            if (lat !== null && lat !== undefined) {
+                form.append("latitude",  lat);
+                form.append("longitude", lng);
             }
-        );
-    } else {
-        // Browser has no geolocation at all — send immediately without location
-        clearTimeout(locationTimeout);
-        smsSent = true;
-        setStatus("📵 Location not supported. Sending SOS SMS now...");
-        launchSMS(null);
+            fetch("/contacts/sos/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrfToken || "",
+                    "X-Requested-With": "XMLHttpRequest"
+                },
+                body: form
+            })
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+                if (data && data.sms_url) {
+                    resolve({ smsUrl: data.sms_url, mapUrl: data.map_url || null });
+                } else {
+                    reject("no sms_url");
+                }
+            })
+            .catch(reject);
+        });
     }
+
+    // ── Try GPS; resolves {lat, lng} or rejects on error/timeout ──────────
+    function getGPS() {
+        return new Promise(function (resolve, reject) {
+            if (!navigator.geolocation) { reject("no geo"); return; }
+            navigator.geolocation.getCurrentPosition(
+                function (pos) { resolve({ lat: pos.coords.latitude, lng: pos.coords.longitude }); },
+                function (err) { reject(err); },
+                { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
+            );
+        });
+    }
+
+    // ── Launch the SMS app ─────────────────────────────────────────────────
+    function launchSMS(smsUrl, withLocation) {
+        if (!smsUrl) return;
+        if (smsBtn) {
+            smsBtn.href = smsUrl;
+            const span = smsBtn.querySelector("span");
+            if (span) {
+                span.textContent = withLocation
+                    ? "💬 SMS Sent with Location ✓ (tap to re-send)"
+                    : "💬 SMS Sent ✓ (tap to re-send)";
+            }
+        }
+        // Navigate to the sms: URI — opens native SMS app on mobile
+        window.location.href = smsUrl;
+    }
+
+    // ── MAIN FLOW ──────────────────────────────────────────────────────────
+    // Race GPS against a 3-second timer.
+    // Win: GPS → POST with coordinates → enriched SMS with map link
+    // Lose: timeout/denied → POST without coordinates → basic SMS
+    var gpsRaceWon = false;
+
+    var gpsRaceTimeout = setTimeout(function () {
+        if (!gpsRaceWon) {
+            // GPS didn't respond in time — send basic SOS SMS now
+            setStatus("⚠️ Location timed out. Sending SOS SMS without location...");
+            fetchSOSUrl(null, null).then(function (r) {
+                launchSMS(r.smsUrl, false);
+            }).catch(function () {
+                setStatus("❌ Could not reach server. Tap SMS button manually.");
+            });
+        }
+    }, 3000);
+
+    getGPS()
+        .then(function (coords) {
+            clearTimeout(gpsRaceTimeout);
+            gpsRaceWon = true;
+            setStatus("📍 Location obtained! Sending SMS with live map link...");
+            return fetchSOSUrl(coords.lat, coords.lng);
+        })
+        .then(function (r) {
+            launchSMS(r.smsUrl, true);
+        })
+        .catch(function () {
+            // GPS denied/blocked — timeout handler above will fire unless already done
+            clearTimeout(gpsRaceTimeout);
+            if (!gpsRaceWon) {
+                setStatus("📵 Location unavailable. Sending SOS SMS without location...");
+                fetchSOSUrl(null, null).then(function (r) {
+                    launchSMS(r.smsUrl, false);
+                }).catch(function () {
+                    setStatus("❌ Could not reach server. Tap SMS button manually.");
+                });
+            }
+        });
 }
+
+
 
 
 

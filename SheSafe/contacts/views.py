@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from urllib.parse import quote
 
 from .models import TrustedContact, SOSAlert
 
@@ -206,8 +207,9 @@ def create_sos_alert(request):
             "has_primary": has_primary,
             "map_url": map_url,
             "tel_url": f"tel:{clean_phone}",
-            "sms_url": f"sms:{clean_phone}?body={emergency_message}"
+            "sms_url": f"sms:{clean_phone}?body={quote(emergency_message)}"
         }
     )
+
 
 
