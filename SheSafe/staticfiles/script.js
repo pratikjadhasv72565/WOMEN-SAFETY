@@ -41,23 +41,44 @@ function getCookie(name) {
 }
 
 
-function openSOS() {
+async function openSOS() {
     const modal = document.getElementById("sosModal");
 
     if (modal) {
         modal.classList.add("show");
     }
 
-    // Instantly trigger direct phone call to primary contact.
-    // The phone number is server-rendered into the button href (tel:PHONE) —
-    // no JS fetch, no permission dialogs, pure native tel: protocol.
-    const callBtn = document.getElementById("sosPrimaryCallBtn");
-    if (callBtn && callBtn.href && callBtn.href.startsWith("tel:")) {
-        window.location.href = callBtn.href;
+    showSOSStatus(
+        "🚨 Triggering Emergency SOS to your Primary Contact..."
+    );
+
+    // 1. Immediately create and dispatch SOS alert WITHOUT waiting for location permissions
+    let currentLat = null;
+    let currentLng = null;
+
+    // Trigger immediate alert to primary contact
+    createSOSAlert(currentLat, currentLng);
+
+    // 2. In parallel (non-blocking), check if GPS is available quickly to enrich location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                currentLat = position.coords.latitude;
+                currentLng = position.coords.longitude;
+                // Silently update location on server and UI
+                createSOSAlert(currentLat, currentLng, true);
+            },
+            function () {
+                // If location permission denied or skipped, emergency alert already dispatched!
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 3000,
+                maximumAge: 0
+            }
+        );
     }
 }
-
-
 
 
 async function createSOSAlert(latitude, longitude, isLocationUpdate = false) {

@@ -739,28 +739,47 @@
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
 
-            <h2 id="sosModalTitle">Emergency SOS Assistance</h2>
-            <p>If you are in immediate physical danger, contact the unified national emergency dispatch or call your primary guardian immediately.</p>
+            <h2 id="sosModalTitle">Emergency SOS</h2>
+            <p>One tap immediately calls your primary trusted contact. No permission required.</p>
 
             <div class="modal-actions-list">
-                <a href="tel:112" class="modal-call-btn red-btn">
-                    <i class="fa-solid fa-phone"></i>
+
+                <!-- PRIMARY CONTACT DIRECT CALL (instant, no JS needed) -->
+                {% if has_trusted_contact %}
+                <a href="tel:{{ primary_contact_phone }}" class="modal-call-btn red-btn sos-primary-call" id="sosPrimaryCallBtn">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <span>Call {{ primary_contact_name }} ({{ primary_contact_display_phone }})</span>
+                </a>
+                <!-- SMS fallback with pre-filled message -->
+                <a href="sms:{{ primary_contact_phone }}?body=EMERGENCY%20SOS%20-%20SheSafe%0A%0AI%20need%20immediate%20help!%20Please%20call%20me%20right%20away."
+                   class="modal-call-btn purple-btn" id="sosPrimarySmsBtn">
+                    <i class="fa-solid fa-comment-sms"></i>
+                    <span>SMS {{ primary_contact_name }}</span>
+                </a>
+                {% else %}
+                <div class="sos-no-contact-warning">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span>No primary contact set. <a href="{% url 'trusted_contacts' %}">Add one now</a> for instant SOS.</span>
+                </div>
+                {% endif %}
+
+                <!-- National Emergency lines (always visible) -->
+                <a href="tel:112" class="modal-call-btn outline-modal-btn">
+                    <i class="fa-solid fa-truck-medical"></i>
                     <span>Call National Emergency (112)</span>
                 </a>
-                <a href="tel:181" class="modal-call-btn purple-btn">
+                <a href="tel:181" class="modal-call-btn outline-modal-btn">
                     <i class="fa-solid fa-person-dress"></i>
                     <span>Call Women Helpline (181)</span>
                 </a>
-                <a href="{% url 'trusted_contacts' %}" class="modal-call-btn outline-modal-btn">
-                    <i class="fa-solid fa-user-shield"></i>
-                    <span>Broadcast SOS to Guardians</span>
-                </a>
+
                 <button onclick="closeSOS()" class="modal-cancel-btn">
                     Close
                 </button>
             </div>
         </div>
     </div>
+
 
     <!-- Javascript -->
     <script src="/static/script.js"></script>
