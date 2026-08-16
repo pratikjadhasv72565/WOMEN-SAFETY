@@ -43,20 +43,97 @@ function getCookie(name) {
 
 function openSOS() {
     const modal = document.getElementById("sosModal");
+    const modalBox = document.getElementById("sosModalBox");
 
-    if (modal) {
-        modal.classList.add("show");
+    if (modal) modal.classList.add("show");
+    if (!modalBox) return;
+
+    // Read primary contact data embedded server-side (no fetch needed)
+    const phone     = modalBox.dataset.phone       || "";
+    const name      = modalBox.dataset.name        || "Primary Contact";
+    const hasContact = modalBox.dataset.hasContact === "true";
+
+    const statusText = document.getElementById("sosStatusText");
+    const smsBtn     = document.getElementById("sosPrimarySmsBtn");
+
+    function setStatus(msg) {
+        if (statusText) statusText.textContent = msg;
     }
 
-    // Instantly trigger direct phone call to primary contact.
-    // The phone number is server-rendered into the button href (tel:PHONE) —
-    // no JS fetch, no permission dialogs, pure native tel: protocol.
-    const callBtn = document.getElementById("sosPrimaryCallBtn");
-    if (callBtn && callBtn.href && callBtn.href.startsWith("tel:")) {
-        window.location.href = callBtn.href;
+    // ── Helper: build and launch the SMS intent with optional map URL ──
+    function launchSMS(mapURL) {
+        if (!phone || !hasContact) return;
+
+        const body = mapURL
+            ? "🚨 EMERGENCY SOS - SheSafe\n\nI need immediate help! Please call me right away.\n\n📍 My live location:\n" + mapURL + "\n\nPlease reach me immediately!"
+            : "🚨 EMERGENCY SOS - SheSafe\n\nI need immediate help! Please call me right away.";
+
+        const smsHref = "sms:" + phone + "?body=" + encodeURIComponent(body);
+
+        // Update the SMS button so user can re-tap if needed
+        if (smsBtn) {
+            smsBtn.href = smsHref;
+            smsBtn.querySelector("span").textContent =
+                mapURL ? "💬 SMS " + name + " (location included ✓)" : "💬 SMS " + name;
+        }
+
+        // Auto-launch the SMS app
+        window.location.href = smsHref;
+    }
+
+    // ── Step 1: Immediately send a basic SOS SMS (no location yet) ──
+    setStatus("📡 Getting your location to include in SMS...");
+
+    if (!hasContact || !phone) {
+        setStatus("⚠️ No primary contact set. Use the emergency numbers below.");
+        return;
+    }
+
+    // ── Step 2: Try to get GPS in the background with a short timeout ──
+    // If GPS arrives within 4 s → send SMS with map link.
+    // If GPS times out → send SMS without location (already dispatched above).
+
+    let smsSent = false;
+
+    const locationTimeout = setTimeout(function () {
+        if (!smsSent) {
+            smsSent = true;
+            setStatus("⚠️ Location unavailable. Sending SOS SMS without location...");
+            launchSMS(null);
+        }
+    }, 4000); // 4-second max wait for GPS
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                if (smsSent) return; // already sent without location
+                clearTimeout(locationTimeout);
+                smsSent = true;
+
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const mapURL = "https://maps.google.com/?q=" + lat + "," + lng;
+
+                setStatus("📍 Location obtained! Sending emergency SMS with live location...");
+                launchSMS(mapURL);
+            },
+            function () {
+                // Permission denied or unavailable — timeout handler will fire
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 3500,
+                maximumAge: 0
+            }
+        );
+    } else {
+        // Browser has no geolocation at all — send immediately without location
+        clearTimeout(locationTimeout);
+        smsSent = true;
+        setStatus("📵 Location not supported. Sending SOS SMS now...");
+        launchSMS(null);
     }
 }
-
 
 
 

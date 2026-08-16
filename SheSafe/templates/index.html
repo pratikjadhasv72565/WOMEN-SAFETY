@@ -730,7 +730,13 @@
 
     <!-- ================= SOS MODAL ================= -->
     <div class="modal" id="sosModal" role="dialog" aria-modal="true" aria-labelledby="sosModalTitle">
-        <div class="modal-box">
+        <div class="modal-box"
+             id="sosModalBox"
+             data-phone="{{ primary_contact_phone }}"
+             data-name="{{ primary_contact_name }}"
+             data-display-phone="{{ primary_contact_display_phone }}"
+             data-has-contact="{{ has_trusted_contact|yesno:'true,false' }}">
+
             <button class="close-modal" onclick="closeSOS()" aria-label="Close emergency modal">
                 <i class="fa-solid fa-xmark"></i>
             </button>
@@ -739,23 +745,33 @@
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
 
-            <h2 id="sosModalTitle">Emergency SOS</h2>
-            <p>One tap immediately calls your primary trusted contact. No permission required.</p>
+            <h2 id="sosModalTitle">🚨 Emergency SOS</h2>
 
-            <div class="modal-actions-list">
+            <!-- Status line updated by JS -->
+            <div id="sosStatusLine" class="sos-status-line">
+                <i class="fa-solid fa-satellite-dish fa-beat"></i>
+                <span id="sosStatusText">Activating emergency protocol...</span>
+            </div>
 
-                <!-- PRIMARY CONTACT DIRECT CALL (instant, no JS needed) -->
+            <div class="modal-actions-list" id="sosActionsList">
+
                 {% if has_trusted_contact %}
-                <a href="tel:{{ primary_contact_phone }}" class="modal-call-btn red-btn sos-primary-call" id="sosPrimaryCallBtn">
+                <!-- CALL: Instant, no JS needed -->
+                <a href="tel:{{ primary_contact_phone }}"
+                   class="modal-call-btn red-btn sos-primary-call"
+                   id="sosPrimaryCallBtn">
                     <i class="fa-solid fa-phone-volume"></i>
-                    <span>Call {{ primary_contact_name }} ({{ primary_contact_display_phone }})</span>
+                    <span>📞 Call {{ primary_contact_name }} ({{ primary_contact_display_phone }})</span>
                 </a>
-                <!-- SMS fallback with pre-filled message -->
-                <a href="sms:{{ primary_contact_phone }}?body=EMERGENCY%20SOS%20-%20SheSafe%0A%0AI%20need%20immediate%20help!%20Please%20call%20me%20right%20away."
-                   class="modal-call-btn purple-btn" id="sosPrimarySmsBtn">
+
+                <!-- SMS: href is updated by JS to include live location, falls back to basic SOS if no GPS -->
+                <a href="sms:{{ primary_contact_phone }}?body=🚨%20EMERGENCY%20SOS%20-%20SheSafe%0A%0AI%20need%20immediate%20help!%20Please%20call%20me%20right%20away."
+                   class="modal-call-btn purple-btn"
+                   id="sosPrimarySmsBtn">
                     <i class="fa-solid fa-comment-sms"></i>
-                    <span>SMS {{ primary_contact_name }}</span>
+                    <span>💬 SMS {{ primary_contact_name }} (with location)</span>
                 </a>
+
                 {% else %}
                 <div class="sos-no-contact-warning">
                     <i class="fa-solid fa-circle-exclamation"></i>
@@ -763,7 +779,7 @@
                 </div>
                 {% endif %}
 
-                <!-- National Emergency lines (always visible) -->
+                <!-- National Emergency (always visible) -->
                 <a href="tel:112" class="modal-call-btn outline-modal-btn">
                     <i class="fa-solid fa-truck-medical"></i>
                     <span>Call National Emergency (112)</span>
@@ -779,6 +795,7 @@
             </div>
         </div>
     </div>
+
 
 
     <!-- Javascript -->
