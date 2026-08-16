@@ -176,22 +176,27 @@ def create_sos_alert(request):
     # Format phone number for tel: and sms: protocols (strip spaces and special chars except leading +)
     clean_phone = phone.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
 
-    # Build Map and emergency message
+    # Build emergency SMS message
     user_display = request.user.username if user_authenticated else "Someone"
     if latitude is not None and longitude is not None:
-        map_url = f"https://www.google.com/maps/search/?api=1&query={latitude},{longitude}"
+        map_url = f"https://maps.google.com/?q={latitude},{longitude}"
         emergency_message = (
-            f"EMERGENCY SOS - SheSafe\n\n"
-            f"URGENT: Hi {contact_name}, {user_display} triggered an Emergency SOS and needs immediate help!\n\n"
-            f"Live Location:\n{map_url}\n\n"
-            f"Please call or reach out immediately."
+            f"🚨 EMERGENCY SOS 🚨\n"
+            f"Hi {contact_name}, {user_display} is in DANGER and needs your IMMEDIATE help!\n\n"
+            f"📍 LIVE LOCATION:\n"
+            f"{map_url}\n\n"
+            f"Please call {user_display} right now or go to the location above immediately!\n\n"
+            f"-- Sent via SheSafe Women Safety App"
         )
     else:
         map_url = ""
         emergency_message = (
-            f"EMERGENCY SOS - SheSafe\n\n"
-            f"URGENT: Hi {contact_name}, {user_display} triggered an Emergency SOS and needs immediate help! Please call or reach out immediately."
+            f"🚨 EMERGENCY SOS 🚨\n"
+            f"Hi {contact_name}, {user_display} is in DANGER and needs your IMMEDIATE help!\n\n"
+            f"Please call {user_display} RIGHT NOW!\n\n"
+            f"-- Sent via SheSafe Women Safety App"
         )
+
 
     return JsonResponse(
         {
