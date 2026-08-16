@@ -33,68 +33,40 @@ document.addEventListener("DOMContentLoaded", function () {
 
 
     function openEmergencyAlert() {
-
         alertModal.classList.add("active");
-
-        alertMessage.textContent =
-            "Requesting your current location...";
-
-        progressBar.style.width = "20%";
-
+        alertMessage.textContent = "🚨 Dispatching emergency alert immediately to " + (selectedContact ? selectedContact.name : "primary contact") + "...";
+        progressBar.style.width = "40%";
         sendAlertBtn.style.display = "none";
         mapBtn.style.display = "none";
 
+        // 1. Immediately send SOS request without waiting on location
+        let currentLat = null;
+        let currentLng = null;
+        sendSOSRequest(currentLat, currentLng);
 
-        if (!navigator.geolocation) {
-
-            alertMessage.textContent =
-                "Location is not supported by this browser.";
-
-            prepareAlert(null, null);
-
-            return;
+        // 2. In parallel, non-blocking GPS enrichment
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    currentLat = position.coords.latitude;
+                    currentLng = position.coords.longitude;
+                    sendSOSRequest(currentLat, currentLng, true);
+                },
+                function () {
+                    // Location denied or skipped, SOS already active
+                },
+                {
+                    enableHighAccuracy: true,
+                    timeout: 2500,
+                    maximumAge: 0
+                }
+            );
         }
-
-
-        navigator.geolocation.getCurrentPosition(
-
-            function (position) {
-
-                const latitude =
-                    position.coords.latitude;
-
-                const longitude =
-                    position.coords.longitude;
-
-                progressBar.style.width = "60%";
-
-                sendSOSRequest(
-                    latitude,
-                    longitude
-                );
-
-            },
-
-            function () {
-
-                alertMessage.textContent =
-                    "Location permission was not granted. You can still prepare an emergency SMS.";
-
-                progressBar.style.width = "60%";
-
-                sendSOSRequest(null, null);
-
-            }
-
-        );
-
     }
 
 
-    function sendSOSRequest(latitude, longitude) {
-
+    function sendSOSRequest(latitude, longitude, isLocationUpdate = false) {
         const csrfToken = getCSRFToken();
-
         const formData = new FormData();
 
         formData.append(
@@ -102,123 +74,63 @@ document.addEventListener("DOMContentLoaded", function () {
             getContactId(selectedContact)
         );
 
-        if (latitude !== null && longitude !== null) {
-
-            formData.append(
-                "latitude",
-                latitude
-            );
-
-            formData.append(
-                "longitude",
-                longitude
-            );
+        if (latitude !== null && longitude !== null && latitude !== undefined) {
+            formData.append("latitude", latitude);
+            formData.append("longitude", longitude);
         }
 
-
         fetch("/contacts/sos/", {
-
             method: "POST",
-
             headers: {
-                "X-CSRFToken": csrfToken
+                "X-CSRFToken": csrfToken,
+                "X-Requested-With": "XMLHttpRequest"
             },
-
             body: formData
-
         })
-
         .then(response => response.json())
-
         .then(data => {
-
             if (!data.success) {
-
-                alertMessage.textContent =
-                    data.message || "Unable to prepare alert.";
-
+                alertMessage.textContent = data.message || "Unable to dispatch alert.";
                 return;
             }
-
 
             emergencyMessage = data.message;
             emergencyPhone = data.phone;
             emergencyMap = data.map_url;
 
-
             progressBar.style.width = "100%";
+            alertMessage.innerHTML = `🚨 Emergency alert active for <strong>${escapeHTML(data.contact_name || 'Primary Contact')}</strong> (${escapeHTML(data.display_phone || data.phone)})!`;
 
-            alertMessage.textContent =
-                "Your emergency message is ready.";
-
-
+            sendAlertBtn.href = data.sms_url || ("sms:" + data.phone + "?body=" + encodeURIComponent(emergencyMessage));
             sendAlertBtn.style.display = "inline-flex";
 
-
             if (emergencyMap) {
-
                 mapBtn.href = emergencyMap;
                 mapBtn.style.display = "inline-flex";
-
             }
 
+            // Auto-trigger SMS intent immediately without waiting for extra clicks
+            if (!isLocationUpdate && emergencyPhone) {
+                window.location.href = data.sms_url || ("sms:" + emergencyPhone + "?body=" + encodeURIComponent(emergencyMessage));
+            }
         })
-
         .catch(error => {
-
             console.error(error);
-
-            alertMessage.textContent =
-                "Something went wrong. Please try again.";
-
+            alertMessage.textContent = "Emergency alert prepared. Tap Open Emergency SMS to send.";
+            if (selectedContact && selectedContact.phone) {
+                sendAlertBtn.style.display = "inline-flex";
+                sendAlertBtn.href = "sms:" + selectedContact.phone + "?body=Emergency! Please help me.";
+            }
         });
-
     }
 
-
-    function prepareAlert(latitude, longitude) {
-
-        let message =
-            "Emergency alert from SheSafe. I may need help.";
-
-        if (latitude && longitude) {
-
-            const map =
-                `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
-
-            message +=
-                ` My current location: ${map}`;
-        }
-
-        emergencyMessage = message;
-
-        emergencyPhone =
-            selectedContact.phone;
-
-        alertMessage.textContent =
-            "Emergency message is ready.";
-
-        sendAlertBtn.style.display =
-            "inline-flex";
-
+    function escapeHTML(str) {
+        if (!str) return "";
+        const div = document.createElement("div");
+        div.textContent = str;
+        return div.innerHTML;
     }
 
-
-    sendAlertBtn.addEventListener("click", function () {
-
-        if (!emergencyPhone) {
-            return;
-        }
-
-        const smsURL =
-            "sms:" +
-            emergencyPhone +
-            "?body=" +
-            encodeURIComponent(emergencyMessage);
-
-        window.location.href = smsURL;
-
-    });
 
 
     if (closeAlert) {

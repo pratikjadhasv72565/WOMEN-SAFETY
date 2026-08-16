@@ -44,333 +44,132 @@ function getCookie(name) {
 async function openSOS() {
     const modal = document.getElementById("sosModal");
 
-    if (!modal) {
-        return;
+    if (modal) {
+        modal.classList.add("show");
     }
-
-    modal.classList.add("show");
 
     showSOSStatus(
-        "🚨 SOS activated. Requesting your current location..."
+        "🚨 Triggering Emergency SOS to your Primary Contact..."
     );
 
-    if (!navigator.geolocation) {
-        showSOSStatus(
-            "Location is not supported by this browser."
+    // 1. Immediately create and dispatch SOS alert WITHOUT waiting for location permissions
+    let currentLat = null;
+    let currentLng = null;
+
+    // Trigger immediate alert to primary contact
+    createSOSAlert(currentLat, currentLng);
+
+    // 2. In parallel (non-blocking), check if GPS is available quickly to enrich location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                currentLat = position.coords.latitude;
+                currentLng = position.coords.longitude;
+                // Silently update location on server and UI
+                createSOSAlert(currentLat, currentLng, true);
+            },
+            function () {
+                // If location permission denied or skipped, emergency alert already dispatched!
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 3000,
+                maximumAge: 0
+            }
         );
-
-        return;
     }
-
-    navigator.geolocation.getCurrentPosition(
-        async function (position) {
-            const latitude =
-                position.coords.latitude;
-
-            const longitude =
-                position.coords.longitude;
-
-            showSOSStatus(
-                "📍 Location received. Preparing emergency alert..."
-            );
-
-            await createSOSAlert(
-                latitude,
-                longitude
-            );
-        },
-
-        function () {
-            showSOSStatus(
-                "⚠️ Location permission was not granted. Please allow location access and try again."
-            );
-        },
-
-        {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
-        }
-    );
 }
 
 
-async function createSOSAlert(latitude, longitude) {
+async function createSOSAlert(latitude, longitude, isLocationUpdate = false) {
     const csrfToken = getCookie("csrftoken");
 
-    if (!csrfToken) {
-        showSOSStatus(
-            "Security token missing. Please refresh the page and try again."
-        );
-
-        return;
-    }
-
     const formData = new FormData();
-
-    formData.append(
-        "latitude",
-        latitude
-    );
-
-    formData.append(
-        "longitude",
-        longitude
-    );
+    if (latitude !== null && longitude !== null && latitude !== undefined) {
+        formData.append("latitude", latitude);
+        formData.append("longitude", longitude);
+    }
 
     try {
         const response = await fetch(
             "/contacts/sos/",
             {
                 method: "POST",
-
                 headers: {
-                    "X-CSRFToken": csrfToken,
+                    "X-CSRFToken": csrfToken || "",
                     "X-Requested-With": "XMLHttpRequest"
                 },
-
                 body: formData,
-
                 credentials: "same-origin"
             }
         );
 
-        const responseText =
-            await response.text();
-
-        let data;
-
-        try {
-            data = JSON.parse(responseText);
-        }
-
-        catch (error) {
-            console.error(
-                "Invalid server response:",
-                responseText
-            );
-
-            showSOSStatus(
-                "Server returned an invalid response."
-            );
-
-            return;
-        }
-
-        if (!response.ok) {
-            showSOSStatus(
-                data.message ||
-                "Server error: " + response.status
-            );
-
-            return;
-        }
+        const data = await response.json();
 
         if (!data.success) {
-            showSOSStatus(
-                data.message ||
-                "Unable to create SOS alert."
-            );
-
+            showSOSStatus(data.message || "Unable to dispatch SOS.");
             return;
         }
 
-        showSOSStatus(
-            "🚨 Emergency alert created successfully."
-        );
+        const modal = document.getElementById("sosModal");
+        const modalBox = modal ? modal.querySelector(".modal-box") : null;
 
+        if (!modalBox) return;
 
-        const modal =
-            document.getElementById("sosModal");
+        const oldResult = document.getElementById("sosResult");
+        if (oldResult) oldResult.remove();
 
-        const modalBox =
-            modal
-                ? modal.querySelector(".modal-box")
-                : null;
-
-
-        if (!modalBox) {
-            return;
-        }
-
-
-        const oldResult =
-            document.getElementById("sosResult");
-
-        if (oldResult) {
-            oldResult.remove();
-        }
-
-
-        const mapURL =
-            data.map_url ||
-            "https://www.google.com/maps?q=" +
-            latitude +
-            "," +
-            longitude;
-
-
-        const smsURL =
-            "sms:" +
-            data.phone +
-            "?body=" +
-            encodeURIComponent(
-                data.message
-            );
-
-
-        const result =
-            document.createElement("div");
-
+        const result = document.createElement("div");
         result.id = "sosResult";
-
         result.style.marginTop = "18px";
         result.style.padding = "16px";
-        result.style.borderRadius = "12px";
-        result.style.background = "#f8f5ff";
-        result.style.border = "1px solid #ddd";
-        result.style.color = "#222";
-        result.style.lineHeight = "1.6";
+        result.style.borderRadius = "14px";
+        result.style.background = "#fff5f5";
+        result.style.border = "2px solid #fca5a5";
+        result.style.color = "#1f2937";
+        result.style.lineHeight = "1.5";
+        result.style.textAlign = "center";
 
+        const contactName = data.contact_name || "Primary Contact";
+        const contactPhone = data.display_phone || data.phone || "112";
 
-        const title =
-            document.createElement("strong");
-
-        title.textContent =
-            "🚨 EMERGENCY ALERT";
-
-
-        const contact =
-            document.createElement("p");
-
-        contact.innerHTML =
-            "<strong>Primary Trusted Contact:</strong><br>" +
-            escapeHTML(
-                data.contact_name ||
-                "Not available"
-            );
-
-
-        const message =
-            document.createElement("p");
-
-        message.textContent =
-            "Your emergency message and current location are ready.";
-
-
-        const mapButton =
-            document.createElement("a");
-
-        mapButton.href = mapURL;
-        mapButton.target = "_blank";
-        mapButton.rel = "noopener";
-        mapButton.textContent =
-            "📍 View Current Location";
-
-        mapButton.style.display =
-            "inline-block";
-
-        mapButton.style.margin =
-            "5px";
-
-        mapButton.style.padding =
-            "10px 14px";
-
-        mapButton.style.borderRadius =
-            "8px";
-
-        mapButton.style.textDecoration =
-            "none";
-
-        mapButton.style.background =
-            "#6c35c9";
-
-        mapButton.style.color =
-            "#ffffff";
-
-
-        const smsButton =
-            document.createElement("a");
-
-        smsButton.href = smsURL;
-        smsButton.textContent =
-            "💬 Open SMS";
-
-        smsButton.style.display =
-            "inline-block";
-
-        smsButton.style.margin =
-            "5px";
-
-        smsButton.style.padding =
-            "10px 14px";
-
-        smsButton.style.borderRadius =
-            "8px";
-
-        smsButton.style.textDecoration =
-            "none";
-
-        smsButton.style.background =
-            "#ef4444";
-
-        smsButton.style.color =
-            "#ffffff";
-
-
-        result.appendChild(title);
-        result.appendChild(contact);
-        result.appendChild(message);
-        result.appendChild(mapButton);
-        result.appendChild(smsButton);
-
+        result.innerHTML = `
+            <div style="font-size: 13px; font-weight: 800; color: #dc2626; letter-spacing: 1px; margin-bottom: 6px; text-transform: uppercase;">
+                <i class="fa-solid fa-satellite-dish"></i> Emergency SOS Dispatched
+            </div>
+            <p style="font-size: 14px; margin-bottom: 12px; color: #374151;">
+                Primary Contact: <strong style="color: #111827;">${escapeHTML(contactName)}</strong> (${escapeHTML(contactPhone)})
+            </p>
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                <a href="${data.tel_url || 'tel:' + data.phone}" id="directCallBtn" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 10px; background: #dc2626; color: #fff; font-weight: 800; font-size: 14px; text-decoration: none; box-shadow: 0 4px 14px rgba(220, 38, 38, 0.35);">
+                    <i class="fa-solid fa-phone-volume"></i> Direct Call Primary Contact (${escapeHTML(contactPhone)})
+                </a>
+                <a href="${data.sms_url || 'sms:' + data.phone}" id="directSmsBtn" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 12px; border-radius: 10px; background: #7c3aed; color: #fff; font-weight: 800; font-size: 14px; text-decoration: none; box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);">
+                    <i class="fa-solid fa-comment-sms"></i> Send Emergency SMS (${escapeHTML(contactName)})
+                </a>
+                ${data.map_url ? `
+                <a href="${data.map_url}" target="_blank" rel="noopener" style="display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px; border-radius: 8px; background: #f3f4f6; color: #374151; font-weight: 600; font-size: 12px; text-decoration: none;">
+                    <i class="fa-solid fa-location-dot" style="color: #dc2626;"></i> View Live GPS Location
+                </a>
+                ` : ''}
+            </div>
+        `;
 
         modalBox.appendChild(result);
 
+        // Auto trigger direct action on first alert dispatch (without blocking or asking permission)
+        if (!isLocationUpdate && data.phone) {
+            // Immediately open SMS intent to the primary contact
+            window.location.href = data.sms_url || ("sms:" + data.phone + "?body=" + encodeURIComponent(data.message));
+        }
 
-        console.log(
-            "SOS Alert ID:",
-            data.alert_id
-        );
-
-        console.log(
-            "Primary Contact:",
-            data.contact_name
-        );
-
-        console.log(
-            "Primary Phone:",
-            data.phone
-        );
-
-        console.log(
-            "Latitude:",
-            data.latitude
-        );
-
-        console.log(
-            "Longitude:",
-            data.longitude
-        );
-
-        console.log(
-            "Google Maps:",
-            data.map_url
-        );
-
-    }
-
-    catch (error) {
-        console.error(
-            "SOS connection error:",
-            error
-        );
-
-        showSOSStatus(
-            "Could not connect to the SheSafe server."
-        );
+        showSOSStatus("🚨 Emergency channels activated for " + escapeHTML(contactName) + ".");
+    } catch (error) {
+        console.error("SOS error:", error);
+        showSOSStatus("Emergency connection error. Please use direct emergency dial below.");
     }
 }
+
 
 
 function escapeHTML(value) {

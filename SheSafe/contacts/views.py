@@ -98,7 +98,6 @@ def emergency_contacts_data(request):
     })
 
 
-@login_required
 def create_sos_alert(request):
     if request.method != "POST":
         return JsonResponse(
@@ -109,44 +108,34 @@ def create_sos_alert(request):
             status=405
         )
 
-    contact_id = request.POST.get("contact_id")
     target_contact = None
+    user_authenticated = request.user.is_authenticated
 
-    if contact_id:
-        try:
+    if user_authenticated:
+        contact_id = request.POST.get("contact_id")
+        if contact_id:
+            try:
+                target_contact = TrustedContact.objects.filter(
+                    id=int(contact_id),
+                    user=request.user
+                ).first()
+            except (ValueError, TypeError):
+                target_contact = None
+
+        if not target_contact:
+            # Prioritize Primary Contact first
             target_contact = TrustedContact.objects.filter(
-                id=int(contact_id),
+                user=request.user,
+                is_primary=True
+            ).first()
+
+        if not target_contact:
+            # Fallback to first available contact
+            target_contact = TrustedContact.objects.filter(
                 user=request.user
             ).first()
-        except (ValueError, TypeError):
-            target_contact = None
 
-    if not target_contact:
-        # Fallback to primary contact
-        target_contact = TrustedContact.objects.filter(
-            user=request.user,
-            is_primary=True
-        ).first()
-
-    if not target_contact:
-        # Fallback to any contact
-        target_contact = TrustedContact.objects.filter(
-            user=request.user
-        ).first()
-
-    if not target_contact:
-        return JsonResponse(
-            {
-                "success": False,
-                "message": (
-                    "No trusted contact found. "
-                    "Please add a trusted contact first in the Safety Network."
-                )
-            },
-            status=400
-        )
-
-    # Get location from request
+    # Get optional location from request without blocking
     lat_val = request.POST.get("latitude")
     long_val = request.POST.get("longitude")
 
@@ -161,40 +150,64 @@ def create_sos_alert(request):
             latitude = None
             longitude = None
 
-    # Save SOS alert in database
-    alert = SOSAlert.objects.create(
-        user=request.user,
-        latitude=latitude,
-        longitude=longitude,
-        is_active=True
-    )
+    # Save SOS alert in database if user is logged in
+    alert_id = None
+    if user_authenticated:
+        alert = SOSAlert.objects.create(
+            user=request.user,
+            latitude=latitude,
+            longitude=longitude,
+            is_active=True
+        )
+        alert_id = alert.id
 
-    # Build Map and SMS message
+    if target_contact:
+        contact_name = target_contact.name
+        phone = target_contact.phone
+        relationship = target_contact.get_relationship_display()
+        has_primary = True
+    else:
+        contact_name = "National Emergency Dispatch"
+        phone = "112"
+        relationship = "Emergency Services"
+        has_primary = False
+
+    # Format phone number for tel: and sms: protocols (strip spaces and special chars except leading +)
+    clean_phone = phone.replace(" ", "").replace("-", "").replace("(", "").replace(")", "")
+
+    # Build Map and emergency message
+    user_display = request.user.username if user_authenticated else "Someone"
     if latitude is not None and longitude is not None:
         map_url = f"https://www.google.com/maps/search/?api=1&query={latitude},{longitude}"
         emergency_message = (
-            f"🚨 EMERGENCY ALERT - SheSafe\n\n"
-            f"Hi {target_contact.name}, I need immediate help. Please contact me right away.\n\n"
-            f"📍 My current location:\n{map_url}\n\n"
-            f"Please check on me."
+            f"EMERGENCY SOS - SheSafe\n\n"
+            f"URGENT: Hi {contact_name}, {user_display} triggered an Emergency SOS and needs immediate help!\n\n"
+            f"Live Location:\n{map_url}\n\n"
+            f"Please call or reach out immediately."
         )
     else:
         map_url = ""
         emergency_message = (
-            f"🚨 EMERGENCY ALERT - SheSafe\n\n"
-            f"Hi {target_contact.name}, I need immediate help. Please call or check on me as soon as possible."
+            f"EMERGENCY SOS - SheSafe\n\n"
+            f"URGENT: Hi {contact_name}, {user_display} triggered an Emergency SOS and needs immediate help! Please call or reach out immediately."
         )
 
     return JsonResponse(
         {
             "success": True,
             "message": emergency_message,
-            "alert_id": alert.id,
+            "alert_id": alert_id,
             "latitude": latitude,
             "longitude": longitude,
-            "contact_name": target_contact.name,
-            "phone": target_contact.phone,
-            "map_url": map_url
+            "contact_name": contact_name,
+            "relationship": relationship,
+            "phone": clean_phone,
+            "display_phone": phone,
+            "has_primary": has_primary,
+            "map_url": map_url,
+            "tel_url": f"tel:{clean_phone}",
+            "sms_url": f"sms:{clean_phone}?body={emergency_message}"
         }
     )
+
 
