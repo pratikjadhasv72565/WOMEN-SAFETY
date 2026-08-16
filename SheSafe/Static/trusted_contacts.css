@@ -935,6 +935,13 @@ footer {
 
     .contact-actions {
         flex-direction: column;
+        width: 100%;
+    }
+
+    .contact-actions button,
+    .contact-actions a {
+        width: 100%;
+        justify-content: center;
     }
 
     .hero-visual {
@@ -952,5 +959,14 @@ footer {
     .send-alert-btn,
     .map-btn {
         width: 100%;
+    }
+}
+
+@media (max-width: 360px) {
+    .page-hero h1 {
+        font-size: 28px;
+    }
+    .add-contact-card {
+        padding: 20px 14px;
     }
 }

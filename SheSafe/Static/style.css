@@ -1756,7 +1756,47 @@ body.dark .art-card {
     color: var(--text-main);
 }
 
-/* ================= RESPONSIVE BREAKPOINTS ================= */
+/* ================= RESPONSIVE BREAKPOINTS (ALL DEVICES) ================= */
+
+/* Global fluid & responsive safety defaults */
+img, svg, video, iframe, canvas {
+    max-width: 100%;
+    height: auto;
+}
+
+input, select, textarea, button {
+    max-width: 100%;
+    font-size: 16px; /* Prevents auto-zoom on iOS Safari */
+}
+
+/* ── LAPTOPS & SMALL DESKTOPS (<= 1200px) ── */
+@media (max-width: 1200px) {
+    .navbar {
+        padding: 0 4%;
+    }
+    .hero {
+        padding: 60px 4% 80px;
+        gap: 40px;
+    }
+    .features-section,
+    .safety-awareness-section,
+    .how-it-works-section,
+    .empowerment-section,
+    .emergency-helplines-section {
+        padding: 90px 4%;
+    }
+    .stats-ribbon {
+        padding: 30px 4%;
+    }
+    .cta-banner-section {
+        padding: 0 4% 80px;
+    }
+    .site-footer {
+        padding: 70px 4% 30px;
+    }
+}
+
+/* ── TABLETS & IPADS (<= 1040px) ── */
 @media (max-width: 1040px) {
     .navbar nav {
         display: none;
@@ -1770,10 +1810,11 @@ body.dark .art-card {
         left: 0;
         width: 100%;
         background: var(--bg-surface);
-        padding: 24px;
+        padding: 24px 30px;
         box-shadow: var(--shadow-xl);
         border-bottom: 1px solid var(--border-light);
-        gap: 16px;
+        gap: 18px;
+        z-index: 999;
     }
 
     .menu-btn {
@@ -1782,8 +1823,9 @@ body.dark .art-card {
 
     .hero {
         flex-direction: column;
-        padding-top: 50px;
+        padding-top: 40px;
         text-align: center;
+        min-height: auto;
     }
 
     .hero-content {
@@ -1803,6 +1845,7 @@ body.dark .art-card {
     .empowerment-container {
         flex-direction: column;
         text-align: center;
+        gap: 50px;
     }
 
     .checklist-grid,
@@ -1816,46 +1859,114 @@ body.dark .art-card {
 
     .steps-flow-grid {
         flex-direction: column;
+        max-width: 500px;
     }
 
     .step-connector {
         transform: rotate(90deg);
+        margin: -5px 0;
+    }
+
+    .step-card {
+        width: 100%;
     }
 
     .helplines-grid {
-        grid-template-columns: 1fr;
-        max-width: 500px;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        max-width: 100%;
     }
 
     .footer-top {
         grid-template-columns: 1fr 1fr;
         gap: 40px;
     }
+
+    .footer-brand-col {
+        grid-column: 1 / -1;
+    }
 }
 
-@media (max-width: 640px) {
+/* ── PHONES & SMALL TABLETS (<= 768px) ── */
+@media (max-width: 768px) {
+    .navbar {
+        height: 72px;
+        padding: 0 5%;
+    }
+
+    .logo h2 {
+        font-size: 21px;
+    }
+
+    .logo-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+    }
+
+    .nav-user {
+        display: none;
+    }
+
+    .hero {
+        padding: 40px 5% 60px;
+    }
+
     .hero h1 {
-        font-size: 38px;
+        font-size: clamp(34px, 8vw, 48px);
+        letter-spacing: -1px;
+    }
+
+    .hero-desc {
+        font-size: 15.5px;
     }
 
     .hero-main-card {
         width: 100%;
-        max-width: 320px;
+        max-width: 340px;
+        padding: 26px 20px;
     }
 
     .float-card {
-        display: none;
+        display: none; /* Avoid visual collision on mobile */
     }
 
-    .checklist-grid,
-    .empower-pills-list,
-    .empower-stats-quad {
+    .features-grid {
         grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .feature-card {
+        padding: 28px 22px;
+    }
+
+    .checklist-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .empower-pills-list {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .empower-stats-quad {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .quad-stat {
+        padding: 25px 15px;
+    }
+
+    .quad-stat strong {
+        font-size: 32px;
     }
 
     .stats-ribbon {
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 20px;
+        padding: 25px 5%;
     }
 
     .stat-sep {
@@ -1863,16 +1974,163 @@ body.dark .art-card {
     }
 
     .cta-card {
-        padding: 40px 24px;
+        padding: 45px 22px;
+        border-radius: var(--radius-lg);
+    }
+
+    .cta-inner h2 {
+        font-size: 28px;
+    }
+
+    .cta-btn-group {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .cta-btn-group .primary-btn,
+    .cta-btn-group .ghost-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* ── SMALL PHONES & COMPACT SCREENS (<= 480px) ── */
+@media (max-width: 480px) {
+    .navbar {
+        height: 66px;
+        padding: 0 4%;
+    }
+
+    .nav-actions {
+        gap: 8px;
+    }
+
+    .nav-btn {
+        padding: 8px 12px;
+        font-size: 12.5px;
+    }
+
+    .sos-pill {
+        padding: 8px 14px;
+        font-size: 12.5px;
+    }
+
+    .hero-badge {
+        font-size: 11px;
+        padding: 6px 12px;
+    }
+
+    .hero h1 {
+        font-size: 30px;
+    }
+
+    .hero-cta {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-cta .primary-btn,
+    .hero-cta .secondary-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .trust-row {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .stats-ribbon {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-number {
+        font-size: 32px;
+    }
+
+    .helplines-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .helpline-card {
+        padding: 24px 18px;
+    }
+
+    .helpline-card h3 {
+        font-size: 28px;
+    }
+
+    .shield-art-wrap {
+        width: 260px;
+        height: 310px;
+    }
+
+    .shield-art-icon i {
+        font-size: 80px;
+    }
+
+    .safety-gradient-backdrop {
+        width: 280px;
+        height: 310px;
+    }
+
+    .art-card {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+
+    .art-card-1 {
+        top: -10px;
+        right: -10px;
+    }
+
+    .art-card-2 {
+        bottom: -10px;
+        left: -10px;
     }
 
     .footer-top {
         grid-template-columns: 1fr;
+        gap: 30px;
     }
 
     .footer-bottom {
         flex-direction: column;
         gap: 8px;
         text-align: center;
+    }
+
+    .modal-box {
+        padding: 30px 18px;
+    }
+
+    .modal-box h2 {
+        font-size: 22px;
+    }
+
+    .modal-call-btn {
+        font-size: 13px;
+        padding: 11px 14px;
+    }
+}
+
+/* ── ULTRA-SMALL DEVICES (<= 360px - e.g. Galaxy Fold folded, small smart displays) ── */
+@media (max-width: 360px) {
+    .logo h2 {
+        font-size: 18px;
+    }
+    .logo small {
+        display: none;
+    }
+    .hero h1 {
+        font-size: 26px;
+    }
+    .badge-tag {
+        font-size: 9.5px;
+        padding: 4px 8px;
+    }
+    .empower-stats-quad {
+        grid-template-columns: 1fr;
     }
 }

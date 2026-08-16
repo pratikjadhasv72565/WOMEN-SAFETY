@@ -480,7 +480,7 @@ body.dark .guide-visual {
 @media (max-width: 700px) {
     .resources-hero {
         flex-direction: column;
-        padding: 60px 5%;
+        padding: 50px 5%;
         text-align: center;
         min-height: auto;
     }
@@ -491,17 +491,25 @@ body.dark .guide-visual {
 
     .hero-actions {
         justify-content: center;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .hero-actions .primary-btn,
+    .hero-actions .secondary-btn {
+        width: 100%;
+        justify-content: center;
     }
 
     .hero-visual {
-        width: 290px;
-        height: 290px;
+        width: 260px;
+        height: 260px;
     }
 
     .main-resource-icon {
-        width: 135px;
-        height: 135px;
-        font-size: 45px;
+        width: 120px;
+        height: 120px;
+        font-size: 40px;
     }
 
     .resource-grid {
@@ -513,29 +521,42 @@ body.dark .guide-visual {
     }
 
     .topic-section {
-        padding: 50px 5%;
+        padding: 45px 5%;
         align-items: flex-start;
+        flex-direction: column;
     }
 
     .topic-section h2 {
-        font-size: 28px;
+        font-size: 26px;
     }
 
     .emergency-section {
-        margin: 45px 5%;
-        padding: 30px;
+        margin: 35px 5%;
+        padding: 24px 18px;
         flex-direction: column;
         align-items: flex-start;
     }
 
     .resource-cta {
-        margin: 50px 5%;
-        padding: 30px;
+        margin: 40px 5%;
+        padding: 28px 18px;
         flex-direction: column;
         align-items: flex-start;
     }
 
     .resource-cta .primary-btn {
         margin-left: 0;
+        width: 100%;
+        justify-content: center;
     }
 }
+
+@media (max-width: 360px) {
+    .resources-hero h1 {
+        font-size: 32px;
+    }
+    .topic-section h2 {
+        font-size: 22px;
+    }
+}
+

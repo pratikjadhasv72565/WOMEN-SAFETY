@@ -390,24 +390,49 @@ button {
 @media (max-width: 550px) {
 
     .navbar {
-        padding: 0 5%;
+        padding: 0 4%;
+        height: 70px;
     }
 
     .logout-btn {
-        padding: 9px 12px;
+        padding: 8px 12px;
+        font-size: 11px;
     }
 
     .checkin-page {
-        padding: 55px 18px;
+        padding: 40px 14px;
     }
 
     .page-heading h1 {
-        font-size: 40px;
+        font-size: 32px;
     }
 
     .status-card,
     .checkin-form-card {
-        padding: 25px;
+        padding: 22px 16px;
+        border-radius: 18px;
     }
 
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 16px; /* Prevents auto-zoom on iOS */
+    }
+
+    .submit-btn {
+        padding: 13px 20px;
+        font-size: 14px;
+    }
+
+}
+
+@media (max-width: 360px) {
+    .page-heading h1 {
+        font-size: 26px;
+    }
+    .status-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 30px;
+    }
 }
