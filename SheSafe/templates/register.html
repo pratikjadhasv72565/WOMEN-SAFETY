@@ -130,109 +130,154 @@
             </div>
 
 
-            <form id="registerForm" method="POST" action="{% url 'register' %}">
+            <form id="registerForm" method="POST" action="{% url 'register' %}" novalidate>
                 {% csrf_token %}
 
-                <div class="form-group">
-
+                <!-- Username Field -->
+                <div class="form-group" id="group-username">
                     <label for="username">
-                        Username
+                        Username <span class="req-star">*</span>
                     </label>
-
                     <div class="input-box">
-
                         <i class="fa-regular fa-user"></i>
-
                         <input
                             type="text"
                             id="username"
                             name="username"
                             value="{{ username|default:'' }}"
-                            placeholder="Choose a username"
+                            placeholder="e.g. priya_sharma"
+                            autocomplete="username"
                             required
                         >
-
+                        <span class="field-status-icon" id="usernameStatus"></span>
                     </div>
-
+                    <div class="field-feedback" id="usernameFeedback"></div>
                 </div>
 
-
-                <div class="form-group">
-
+                <!-- Email Field -->
+                <div class="form-group" id="group-email">
                     <label for="email">
-                        Email Address
+                        Email Address <span class="req-star">*</span>
                     </label>
-
                     <div class="input-box">
-
                         <i class="fa-regular fa-envelope"></i>
-
                         <input
                             type="email"
                             id="email"
                             name="email"
                             value="{{ email|default:'' }}"
-                            placeholder="Enter your email address"
+                            placeholder="e.g. priya@example.com"
+                            autocomplete="email"
                             required
                         >
-
+                        <span class="field-status-icon" id="emailStatus"></span>
                     </div>
-
+                    <div class="field-feedback" id="emailFeedback"></div>
                 </div>
 
-
-                <div class="form-group">
-
-                    <label for="password">
-                        Password
+                <!-- Phone Number Field -->
+                <div class="form-group" id="group-phone">
+                    <label for="phone">
+                        Phone Number <span class="req-star">*</span>
                     </label>
-
                     <div class="input-box">
+                        <i class="fa-solid fa-phone"></i>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            value="{{ phone|default:'' }}"
+                            placeholder="10-digit mobile number (e.g. 9876543210)"
+                            autocomplete="tel"
+                            maxlength="15"
+                            required
+                        >
+                        <span class="field-status-icon" id="phoneStatus"></span>
+                    </div>
+                    <div class="field-feedback" id="phoneFeedback"></div>
+                </div>
 
+                <!-- Password Field -->
+                <div class="form-group" id="group-password">
+                    <label for="password">
+                        Password <span class="req-star">*</span>
+                    </label>
+                    <div class="input-box">
                         <i class="fa-solid fa-lock"></i>
-
                         <input
                             type="password"
                             id="password"
                             name="password"
-                            placeholder="Create a strong password (min 6 chars)"
+                            placeholder="Create a strong password (min 8 chars)"
+                            autocomplete="new-password"
                             required
                         >
-
                         <button
                             type="button"
                             class="password-toggle"
-                            id="passwordToggle">
-
+                            id="passwordToggle"
+                            aria-label="Toggle password visibility">
                             <i class="fa-regular fa-eye"></i>
-
                         </button>
-
                     </div>
 
+                    <!-- Password Strength Meter -->
+                    <div class="password-strength-container" id="passwordStrengthContainer" style="display: none;">
+                        <div class="strength-bar-track">
+                            <div class="strength-bar-fill" id="strengthBarFill"></div>
+                        </div>
+                        <div class="strength-label">
+                            <span>Strength:</span>
+                            <strong id="strengthText">Weak</strong>
+                        </div>
+                    </div>
+
+                    <!-- Password Requirements Checklist -->
+                    <div class="password-requirements" id="passwordRequirements">
+                        <div class="req-item" id="req-length">
+                            <i class="fa-solid fa-circle-xmark"></i> 8+ characters
+                        </div>
+                        <div class="req-item" id="req-upper">
+                            <i class="fa-solid fa-circle-xmark"></i> 1 uppercase (A-Z)
+                        </div>
+                        <div class="req-item" id="req-lower">
+                            <i class="fa-solid fa-circle-xmark"></i> 1 lowercase (a-z)
+                        </div>
+                        <div class="req-item" id="req-number">
+                            <i class="fa-solid fa-circle-xmark"></i> 1 number (0-9)
+                        </div>
+                        <div class="req-item" id="req-special">
+                            <i class="fa-solid fa-circle-xmark"></i> 1 symbol (!@#$)
+                        </div>
+                    </div>
+
+                    <div class="field-feedback" id="passwordFeedback"></div>
                 </div>
 
-
-                <div class="form-group">
-
+                <!-- Confirm Password Field -->
+                <div class="form-group" id="group-confirm-password">
                     <label for="confirm_password">
-                        Confirm Password
+                        Confirm Password <span class="req-star">*</span>
                     </label>
-
                     <div class="input-box">
-
                         <i class="fa-solid fa-lock-open"></i>
-
                         <input
                             type="password"
                             id="confirm_password"
                             name="confirm_password"
                             placeholder="Re-enter your password"
+                            autocomplete="new-password"
                             required
                         >
-
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            id="confirmPasswordToggle"
+                            aria-label="Toggle confirm password visibility">
+                            <i class="fa-regular fa-eye"></i>
+                        </button>
                     </div>
-
+                    <div class="field-feedback" id="confirmPasswordFeedback"></div>
                 </div>
 
 
